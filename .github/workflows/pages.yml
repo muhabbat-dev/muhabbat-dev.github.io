@@ -1,25 +1,11 @@
-# name: learn-github-actions
-# run-name: ${{ github.actor }} is learning GitHub Actions
-# on: [push]
-# jobs:
-#   check-bats-version:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - uses: actions/setup-node@v3
-#         with:
-#           node-version: '14'
-#       - run: npm install -g bats
-#       - run: bats -v
-
-
-
 name: Clone Remote Repo and Build
 run-name: Portfolio by ${{ github.actor }} 
 on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+env:
+  ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
 
   # Allows you to run this workflow manually from the Actions tab
   # workflow_dispatch:
@@ -71,7 +57,7 @@ jobs:
       - name: git Actions
         uses: srt32/git-actions@v0.0.3
       - name: Cloning git Repo
-        run: git clone https://${{secrets.ACCESS_TOKEN}}@github.com/dev-mohib/portfolio.git gatsby
+        run: git clone https://${{ACCESS_TOKEN}}@github.com/dev-mohib/portfolio.git gatsby
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v2
