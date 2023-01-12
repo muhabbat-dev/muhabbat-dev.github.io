@@ -59,7 +59,7 @@ jobs:
       - name: git Actions
         uses: srt32/git-actions@v0.0.3
       - name: Cloning git Repo
-        run: git clone https://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@github.com/dev-mohib/portfolio.git gatsby
+        run: git clone https://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@github.com/dev-mohib/portfolio.git gatsby
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v2
