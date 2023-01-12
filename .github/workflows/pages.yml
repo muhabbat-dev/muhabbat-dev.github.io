@@ -5,7 +5,7 @@ on:
   push:
     branches: ["main"]
 env:
-  ACCESS_TOKEN: ${{vars.GH_TOKEN}}
+  ACCESS_TOKEN: ${{vars.ACCESS_TOKEN}}
 
   # Allows you to run this workflow manually from the Actions tab
   # workflow_dispatch:
