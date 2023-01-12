@@ -59,7 +59,7 @@ jobs:
       - name: git Actions
         uses: srt32/git-actions@v0.0.3
       - name: Cloning git Repo
-        run: git clone https://${{secrets.GITHUB_TOKEN}}@github.com/dev-mohib/portfolio.git gatsby
+        run: git clone https://git@github.com/dev-mohib/portfolio.git gatsby
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v2
