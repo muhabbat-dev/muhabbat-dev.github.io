@@ -5,7 +5,7 @@ on:
   push:
     branches: ["main"]
 env:
-  ACCESS_TOKEN: ${{vars.ACCESS_TOKEN}}
+  ACCESS_TOKEN: ${{secret.ACCESS_TOKEN}}
 
   # Allows you to run this workflow manually from the Actions tab
   # workflow_dispatch:
@@ -59,7 +59,7 @@ jobs:
       - name: git Actions
         uses: srt32/git-actions@v0.0.3
       - name: Cloning git Repo
-        run: git clone https://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@github.com/dev-mohib/portfolio.git gatsby
+        run: git clone https://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@github.com/dev-mohib/portfolio.git gatsby
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v2
