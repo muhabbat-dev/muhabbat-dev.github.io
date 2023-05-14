@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+  word-wrap: break-word
+}
+
+
+.flex-row-center { 
+  @apply flex flex-row justify-center items-center
+}
+.flex-col-center { 
+  @apply flex flex-col justify-center items-center
+}
+
+.flex-col-between { 
+  @apply flex flex-col justify-between items-center
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.sidebar-content::-webkit-scrollbar {
+  display: none;
+}
+.flex-r-c{ 
+  @apply flex flex-row justify-center items-center
+}
+.flex-c-c{ 
+  @apply flex flex-col justify-center items-center
+}
+.flex-r-b{ 
+  @apply flex flex-row justify-between items-center
+}
+.flex-c-b{ 
+  @apply flex flex-row justify-between items-center
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.sidebar-content {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.card { 
+  width: 31%;
+}
+@media screen and (max-width: 600px) {
+  .card {
+    width: 95%;
+  }
+  .hero-container {
+    height: 60%;
+    margin-top: 64px;
+  }
+}
+
+/* Medium */
+
+@media(min-width : 768){
+  .blog-body{
+    display: flex;
+    flex-direction: row;
+    background-color: #fff;
+  }
+
+  .blog-body .right{
+    width: 20%;
+  }
+  .blog-body .content{
+    width: 60%;
+  }
+  .blog-body .left{
+    width: 20%;
+  }
+  
+}
+
+
+@media(min-width : 640){
+  .blog-body{
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    
+  }
+
+  .blog-body .right{
+    width: 100%;
+  }
+  .blog-body .content{
+    width: 100%;
+  }
+  .blog-body .left{
+    width: 100%;
+  }
+  
+}
+
+
+.blog-post-content{
+  max-width: 75vw;
+}
+
+.blog-post-content h1 {
+  font-size: 3rem;
+  font-weight: bolder;
+}
+.blog-post-content h2{
+  font-size: 2rem;
+  font-weight: bolder;
+}
+
+.blog-post-content h3{
+  font-size: 1.5rem;
+  font-weight: bolder;
+}
+.blog-post-content *{
+  word-wrap: break-word;
+
+}
+
+
+amp-story {
+  color: #fff;
+}
+
+.bottom {
+  align-content: end;
+}
+
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 50% 50%;
+}
+
+.banner-text {
+  text-align: center;
+  background-color: #000;
+  line-height: 2em;
+}

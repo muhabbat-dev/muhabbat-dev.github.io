@@ -1,40 +1,49 @@
 {
-  "name": "gatsby-starter-default",
+  "name": "dev-mohib",
+  "version": "1.0.0",
   "private": true,
-  "description": "A simple starter to get up and developing quickly with Gatsby",
-  "version": "0.1.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
-  "dependencies": {
-    "gatsby": "^5.4.0",
-    "gatsby-plugin-image": "^3.4.0",
-    "gatsby-plugin-manifest": "^5.4.0",
-    "gatsby-plugin-sharp": "^5.4.0",
-    "gatsby-source-filesystem": "^5.4.0",
-    "gatsby-transformer-sharp": "^5.4.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "prettier": "^2.8.1"
-  },
+  "description": "dev-mohib",
+  "author": "Dev Mohib",
   "keywords": [
     "gatsby"
   ],
-  "license": "0BSD",
   "scripts": {
-    "build": "gatsby build",
     "develop": "gatsby develop",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,css}\"",
     "start": "gatsby develop",
+    "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
+    "typecheck": "tsc --noEmit"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-default"
+  "dependencies": {
+    "@mdx-js/mdx": "^1.6.22",
+    "@mdx-js/react": "^1.6.22",
+    "daisyui": "^2.22.0",
+    "gatsby": "^4.20.0",
+    "gatsby-plugin-google-analytics": "^4.20.0",
+    "gatsby-plugin-image": "^2.20.0",
+    "gatsby-plugin-manifest": "^4.20.0",
+    "gatsby-plugin-mdx": "^3.20.0",
+    "gatsby-plugin-postcss": "^5.20.0",
+    "gatsby-plugin-sharp": "^4.20.0",
+    "gatsby-source-filesystem": "^4.20.0",
+    "gatsby-source-hashnode": "^3.0.3",
+    "gatsby-source-sanity": "^7.6.0",
+    "gatsby-transformer-remark": "^5.21.0",
+    "gatsby-transformer-sharp": "^4.20.0",
+    "postcss": "^8.4.14",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "react-google-stories": "^1.0.4",
+    "react-icons": "^4.4.0",
+    "react-markdown": "^8.0.3"
   },
-  "bugs": {
-    "url": "https://github.com/gatsbyjs/gatsby/issues"
+  "devDependencies": {
+    "@types/node": "^17.0.45",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "autoprefixer": "^10.4.8",
+    "tailwindcss": "^3.1.7",
+    "typescript": "^4.7.4"
   }
 }
