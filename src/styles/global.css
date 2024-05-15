@@ -1,0 +1,10 @@
+.btn{
+    @apply block w-full px-4 py-2 mt-5 text-xs font-semibold text-center duration-300 ease-out border rounded 
+}
+
+.btn-active{
+    @apply bg-neutral-900 dark:bg-neutral-100 dark:hover:border-neutral-300 dark:text-neutral-800 dark:hover:bg-neutral-950 dark:hover:text-neutral-100 text-neutral-100 border-neutral-900 hover:bg-white hover:text-neutral-900 cursor-pointer
+}
+.btn-disabled{
+    @apply cursor-not-allowed text-black  dark:bg-gray-300
+}

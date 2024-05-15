@@ -1,0 +1,5 @@
+---
+export async function getNumberOfPages(){
+    return await Astro.glob<any>('../pages/post/*.mdx');
+}
+---
