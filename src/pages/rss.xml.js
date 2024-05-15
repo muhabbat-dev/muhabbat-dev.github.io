@@ -20,13 +20,16 @@ export const GET = async(context) => {
       link : `${context.url.origin}${post.url}`,
       author : "Muhabbat Ali",
       customData: `<media:content
-          type="image/*"
+          type="image/${post.frontmatter.image.split(".")[1]}"
           medium="image"
-          url="${context.url.origin}${post.frontmatter.image}" /> 
-      `,
+          width="400"
+          height="300"
+          url="${context.url.origin}${post.frontmatter.image}" />`,
     })),
-    // (optional) inject custom xml
-    customData: `<language>en-us</language>`,
+    customData: `
+    <language>en-us</language>
+    <atom:link href="${context.url.origin}/rss.xml" rel="self" type="application/rss+xml" />
+    `,
   });
 }
 
