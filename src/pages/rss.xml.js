@@ -15,6 +15,9 @@ export const GET = async(context) => {
       description: post.frontmatter.description,
       link : `${context.url.origin}${post.url}`,
       author : "Muhabbat Ali",
+      enclosure : { type : "image/*", length:12345, 
+      url : `${context.url.origin}${post.frontmatter.image}`,
+    },
     })),
     // (optional) inject custom xml
     customData: `<language>en-us</language>`,
