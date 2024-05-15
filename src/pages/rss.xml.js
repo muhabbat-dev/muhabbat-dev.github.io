@@ -1,5 +1,6 @@
 
 import rss from '@astrojs/rss';
+import sanitizeHtml from "sanitize-html"
 
 export const GET = async(context) => {
   const postImportResult = import.meta.glob('./post/**/*.mdx', { eager: true });
@@ -19,6 +20,13 @@ export const GET = async(context) => {
       description: post.frontmatter.description,
       link : `${context.url.origin}${post.url}`,
       author : "Muhabbat Ali",
+      content : sanitizeHtml(`
+      <figure>
+        <img alt="${post.frontmatter.title}" src="${context.url.origin}${post.frontmatter.image}" />
+      </figure>
+    `,{
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
+    }),
       customData: `<media:content
           type="image/${post.frontmatter.image.split(".")[1]}"
           medium="image"
