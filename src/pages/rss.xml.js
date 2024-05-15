@@ -27,6 +27,11 @@ export const GET = async(context) => {
     `,{
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
     }),
+    enclosure: {
+      length: 0,
+      type :`image/${post.frontmatter.image.split(".")[1]}`,
+      url: `${context.url.origin}${post.frontmatter.image}`
+    },
       customData: `<media:content
           type="image/${post.frontmatter.image.split(".")[1]}"
           medium="image"
@@ -34,6 +39,7 @@ export const GET = async(context) => {
           height="300"
           url="${context.url.origin}${post.frontmatter.image}" />`,
     })),
+
     customData: `
     <language>en-us</language>
     <atom:link href="${context.url.origin}/rss.xml" rel="self" type="application/rss+xml" />
