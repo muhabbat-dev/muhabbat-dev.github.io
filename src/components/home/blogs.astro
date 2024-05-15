@@ -2,7 +2,7 @@
 import Button from "../button.astro";
 import PostsLoop from "../posts-loop.astro";
 
-const feed = "https://feed.miantiao.me/";
+const feed = Astro.url.origin + "/rss.xml";
 ---
 
 <section class="max-w-4xl mx-auto px-7 lg:px-0">
@@ -56,13 +56,15 @@ const feed = "https://feed.miantiao.me/";
           <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
             Get my blog updates via <a
               class="font-bold"
+              target="_blank"
               href={`https://feedly.com/i/subscription/feed%2F${encodeURIComponent(feed)}`}
               >Feedly</a
             >, <a
               class="font-bold"
+              target="_blank"
               href={`https://www.inoreader.com/feed/${encodeURIComponent(feed)}`}
               >Inoreader</a
-            > or <a class="font-bold" href={feed}>RSS</a>.
+            > or <a class="font-bold" href={feed} target="_blank">RSS</a>.
           </p>
           <div class="flex flex-col items-center w-full mt-4 space-y-3">
             <input
