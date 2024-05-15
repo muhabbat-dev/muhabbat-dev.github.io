@@ -1,0 +1,26 @@
+[
+	{
+		"name": "Motionayers",
+		"description": "Image to Animation tool",
+		"image": "/projects/motionlayer.gif",
+		"url": "https://www.theartpeople.com.sg/motionlayer.html"
+	},
+	{
+		"name": "AnimateQ",
+		"description": "Multi frame Drawing Animation Tool",
+		"image": "/projects/AnimateQ.gif",
+		"url": "https://www.theartpeople.com.sg/animateq.html"
+	},
+	{
+		"name": "CodeYolo",
+		"description": "Online HTML,CSS,Javascript code editor",
+		"image": "/projects/codeyolo.gif",
+		"url": "https://editor.codeyolo.com/#/"
+	},
+	{
+		"name": "Augle.io",
+		"description": "Augmented Reality + 3D Editor app",
+		"image": "/projects/augle.gif",
+		"url": "https://editor.codeyolo.com/#/"
+	}
+]

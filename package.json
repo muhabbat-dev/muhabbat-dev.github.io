@@ -1,49 +1,26 @@
 {
-  "name": "dev-mohib",
-  "version": "1.0.0",
-  "private": true,
-  "description": "dev-mohib",
-  "author": "Dev Mohib",
-  "keywords": [
-    "gatsby"
-  ],
-  "scripts": {
-    "develop": "gatsby develop",
-    "start": "gatsby develop",
-    "build": "gatsby build",
-    "serve": "gatsby serve",
-    "clean": "gatsby clean",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@mdx-js/mdx": "^1.6.22",
-    "@mdx-js/react": "^1.6.22",
-    "daisyui": "^2.22.0",
-    "gatsby": "^4.20.0",
-    "gatsby-plugin-google-analytics": "^4.20.0",
-    "gatsby-plugin-image": "^2.20.0",
-    "gatsby-plugin-manifest": "^4.20.0",
-    "gatsby-plugin-mdx": "^3.20.0",
-    "gatsby-plugin-postcss": "^5.20.0",
-    "gatsby-plugin-sharp": "^4.20.0",
-    "gatsby-source-filesystem": "^4.20.0",
-    "gatsby-source-hashnode": "^3.0.3",
-    "gatsby-source-sanity": "^7.6.0",
-    "gatsby-transformer-remark": "^5.21.0",
-    "gatsby-transformer-sharp": "^4.20.0",
-    "postcss": "^8.4.14",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
-    "react-google-stories": "^1.0.4",
-    "react-icons": "^4.4.0",
-    "react-markdown": "^8.0.3"
-  },
-  "devDependencies": {
-    "@types/node": "^17.0.45",
-    "@types/react": "^18.0.15",
-    "@types/react-dom": "^18.0.6",
-    "autoprefixer": "^10.4.8",
-    "tailwindcss": "^3.1.7",
-    "typescript": "^4.7.4"
-  }
+	"name": "",
+	"type": "module",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "astro dev",
+		"start": "astro dev",
+		"build": "astro check && astro build",
+		"preview": "astro preview",
+		"astro": "astro",
+		"check": "biome check --apply-unsafe ."
+	},
+	"devDependencies": {
+		"@astrojs/check": "^0.6.0",
+		"@astrojs/tailwind": "^5.1.0",
+		"@biomejs/biome": "1.7.3",
+		"@tailwindcss/typography": "^0.5.13",
+		"astro": "^4.8.2",
+		"tailwindcss": "^3.4.3",
+		"typescript": "^5.4.5"
+	},
+	"dependencies": {
+		"@astrojs/check": "^0.6.0",
+		"typescript": "^5.4.5"
+	}
 }
