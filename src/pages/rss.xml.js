@@ -5,7 +5,6 @@ import sanitizeHtml from "sanitize-html"
 export const GET = async(context) => {
   const postImportResult = import.meta.glob('./post/**/*.mdx', { eager: true });
   const posts = Object.values(postImportResult);
-  console.log(posts[0].body);
   return rss({
     title: 'DevMohib’s Blog',
     description: 'An RSS feed to all my blogs',
@@ -37,7 +36,9 @@ export const GET = async(context) => {
           medium="image"
           width="400"
           height="300"
-          url="${context.url.origin}${post.frontmatter.image}" />`,
+          url="${context.url.origin}${post.frontmatter.image}" />
+          <meta property="og:image" content="${context.url.origin}${post.frontmatter.image}" />
+          `,
     })),
 
     customData: `
