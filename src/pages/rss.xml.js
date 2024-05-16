@@ -22,7 +22,7 @@ export const GET = async(context) => {
       author : "Muhabbat Ali",
       content : sanitizeHtml(`
       <figure>
-        <img alt="${post.frontmatter.title}" src="${context.url.origin}${post.frontmatter.image}" />
+        <img class="webfeedsFeaturedVisual" alt="${post.frontmatter.title}" src="${context.url.origin}${post.frontmatter.image}" />
       </figure>
     `,{
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
@@ -45,6 +45,9 @@ export const GET = async(context) => {
     customData: `
     <language>en-us</language>
     <atom:link href="${context.url.origin}/rss.xml" rel="self" type="application/rss+xml" />
+    <webfeeds:cover image="${context.url.origin}/assets/images/about.jpg" />
+    <webfeeds:accentColor>000000</webfeeds:accentColor>
+    <webfeeds:logo>${context.url.origin}/favicon.ico</webfeeds:logo>
     `,
   });
 }
