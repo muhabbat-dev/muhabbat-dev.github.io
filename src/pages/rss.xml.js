@@ -21,7 +21,7 @@ export const GET = async(context) => {
       title : blog.data.title,
       pubDate : blog.data.pubDate,
       description: blog.data.description,
-      link : `${context.url.origin}${blog.slug}`,
+      link : `${context.url.origin}/blog/${blog.slug}`,
       author : "Muhabbat Ali",
       content : sanitizeHtml(parser.render(blog.body), {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
@@ -43,7 +43,7 @@ export const GET = async(context) => {
     })),
     customData: `
     <language>en-us</language>
-    <atom:link href="${context.url.origin}/rss.xml" rel="self" type="application/rss+xml" />
+    <link href="${context.url.origin}/rss.xml" rel="alternate" type="application/rss+xml" title="DevMohib" />
     <webfeeds:cover image="${context.url.origin}/assets/images/about.jpg" />
     <webfeeds:accentColor>00FF00</webfeeds:accentColor>
     <webfeeds:logo>${context.url.origin}/favicon.ico</webfeeds:logo>

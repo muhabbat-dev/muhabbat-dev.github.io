@@ -3,12 +3,10 @@ import { getCollection } from "astro:content";
 import PageHeading from "../../components/page-heading.astro";
 import PostCard from "../../components/post-card.astro";
 import Layout from "../../layouts/main.astro";
-
 const allBlog = (await getCollection('posts')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-console.log(allBlog[0]);
 const currentPage : number = 1
 const nextPage : number = currentPage + 1
 const postPerPage : number = 3
