@@ -2,7 +2,9 @@
 import Button from "../button.astro";
 import PostsLoop from "../posts-loop.astro";
 
-const feed = Astro.url.origin + "/rss.xml";
+// const feed = Astro.url.origin + "/rss.xml";
+const feed = "https://dev-mohib.github.io/rss.xml";
+
 ---
 
 <section class="max-w-4xl mx-auto px-7 lg:px-0">
@@ -64,7 +66,7 @@ const feed = Astro.url.origin + "/rss.xml";
               target="_blank"
               href={`https://www.inoreader.com/feed/${encodeURIComponent(feed)}`}
               >Inoreader</a
-            > or <a class="font-bold" href={feed} target="_blank">RSS</a>.
+            > or <a class="font-bold" href={`https://feeder.co/library/feeds/new/rss?q=${encodeURIComponent(feed)}`} target="_blank">Feeder</a>.
           </p>
           <div class="flex flex-col items-center w-full mt-4 space-y-3">
             <input
