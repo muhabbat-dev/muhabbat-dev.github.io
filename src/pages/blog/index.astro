@@ -1,12 +1,18 @@
 ---
+import { getCollection } from "astro:content";
 import PageHeading from "../../components/page-heading.astro";
 import PostCard from "../../components/post-card.astro";
 import Layout from "../../layouts/main.astro";
-const posts = await Astro.glob<any>('../post/*.mdx');
+
+const allBlog = (await getCollection('posts')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+console.log(allBlog[0]);
 const currentPage : number = 1
 const nextPage : number = currentPage + 1
 const postPerPage : number = 3
-const hasNext : boolean = posts.length > currentPage*postPerPage ? true : false
+const hasNext : boolean = allBlog.length > currentPage*postPerPage ? true : false
 const hasPrevious : boolean = currentPage > 1 ? true : false
 ---
 
@@ -19,10 +25,10 @@ const hasPrevious : boolean = currentPage > 1 ? true : false
 
     <div class="z-50 flex flex-col items-stretch w-full gap-5 my-8">
       {
-        posts.slice(0, 3).map(p => {
+        allBlog.slice(0, 3).map(p => {
           return (
             <div>
-              <PostCard post={p.frontmatter} link={p.url}/>
+              <PostCard post={p.data} link={`/blog/${p.slug}`}/>
             </div>
           )
         })

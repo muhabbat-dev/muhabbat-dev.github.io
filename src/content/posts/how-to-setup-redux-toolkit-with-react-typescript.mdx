@@ -1,0 +1,144 @@
+---
+layout: ../../layouts/post.astro
+title: How to setup redux toolkit with react js and typescript
+description: This is probably the easiest way to implement redux store with typescript using toolkit redux.
+dateFormatted: December 10, 2023
+pubDate: 2024-01-06
+image: /posts/react-redux-toolkit-typescript.png
+---
+
+<img src={frontmatter.image}/>
+Have you ever disinclined while implementing redux in your React app? You are not the only one who has this problem. Redux has a lot of boilerplates to set before configuring a store to collect and manage all data in a single place. But, a library has arrived to fix all these confusing setups to configure in the app. Redux toolkit makes our state management with redux a lot easier than the older technique to the store. In this article, I'm writing about the Redux toolkit and the step-by-step procedure to implement Redux with typescript support.
+
+# What is redux
+
+I'm not explaining the complete concept of redux but here are a few main points of redux in my head
+
+- It's a global state management tool for storing all the application data in a single place
+- It's also called the single source of truth
+- It works like a useState in the react component but as a global to **get** and **set** values from anywhere in the app.
+
+# What is Redux Toolkit
+
+Redux toolkit is a simple library that includes simple utilities to simplify common use cases in redux such as store setup, creating reducers, immuting state of the store, and a lot more. The entire store is divided into multiple slices which creates a well-managed way to work with different parts of the store. The terminology of Redux : actions, reducers, store, dispatch, and connect can be implemented without much effort.
+
+# Counter App Implementation Example
+
+Here is the step-by-step guide to implementing a very basic counter app in the redux toolkit
+
+## Step 1
+
+1. create a react project by running `npx create-react-app counter-app -typescript` to initialize a new react project and quickly create a new folder inside the src directory called **state** where all the redux logic will be added.
+2. install the following dependencies
+
+`npm i redux react-redux @reduxjs/toolkit`
+
+## Step 2: Implement Slice
+
+create a file **counter_slice.ts** with the following lines of code to create a slice, This slice has everything for the redux store, actions, reducer, state, etc
+
+```jsx
+import {createSlice} from "@reduxjs/toolkit";
+interface CounterSlice = {
+value : number
+};
+const initialState : CounterSlice = {
+value : 0
+}
+export const counterSlice = createSlice({
+   initialState,
+    name : "counter_slice", //name of slice, also appears in redux chrome extension
+    reducers : {
+    increaseCounter : ( state ) => {
+    state.value++
+    },
+    decreaseCounter : (state) => {
+      state.value--
+    },
+    setFixedValue : (state, action : PayloadAction<number>) => {
+      state.value = action.payload
+    }
+   }
+})
+```
+
+## Step 3: Implement Store
+
+create a file **store.ts** inside the state directory and import the counterSlice that you just created. I'm also exporting two hooks `useAppDispatch` and `useAppSelector` with type directly from the store that we will use inside the react components with typescript
+
+```jsx
+import { configureStore } from "@reduxjs/toolkit";
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+import { counterSlice } from "./sounter_slice"
+
+//destructing reducer and actions from the slice
+const { reducer, actions} = counterSlice
+
+export const store = configureStore({
+reducer : {
+    counterSlice : reducer
+  }
+})
+// Dispatch Hook
+export const useAppDispatch = () => useDispatch<typeof store.dispatch>()
+// useSelector Hook, similar to useSelector with typescript
+export const useAppSelector : TypedUseSelectorHook<ReturnType<typeof store.getState>> = useSelector
+
+//export actions of counter slice for directly mutating inside the react components
+export { increaseCounter, decreaseCounter, setFixedValue } = actions
+```
+
+## Step 4: Wrap the Application with the store provider Component
+
+```jsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import { Provider } from 'react-redux'
+import {store} from './state/store'
+
+ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>
+```
+
+## Step 5: set or get from the state
+
+Now open the App.js file
+
+```jsx
+import React from "react"
+import {useAppDispatch, useAppSelector, increaseCounter, decreaseCounter, setFixedValue } from "../../state/store"
+
+const App : React.FC = () => {
+    const {value} = useAppSelector(state => state.counterSlice)
+    const dispatch = useAppDispatch()
+  return (
+    <div>
+        <h1>Counter Value : { value }</h1>
+
+        <button
+          onClick={() => dispatch(increaseCounter())}
+         >
+              Increament
+         </button>
+        <button
+            onClick={() => dispatch(decreaseCounter())}
+          >
+               Decreament
+        </button>
+
+        <input type="number" value="Enter Number"
+              onChange={(e) =>  dispatch(setFixedValue(parseInt(e.target.value)))}
+         />
+    </div>
+  )
+}
+
+export default App
+```
+
+# Conclusion
