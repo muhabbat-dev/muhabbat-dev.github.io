@@ -12,6 +12,7 @@ export const GET = async(context) => {
     xmlns: {
       media: "http://search.yahoo.com/mrss/",
       atom: "http://www.w3.org/2005/Atom",
+      webfeeds : "http://webfeeds.org/rss/1.0"
     },
     items : posts.map(post => ({
       title : post.frontmatter.title,
@@ -37,7 +38,7 @@ export const GET = async(context) => {
           width="400"
           height="300"
           url="${context.url.origin}${post.frontmatter.image}" />
-          <meta property="og:image" content="${context.url.origin}${post.frontmatter.image}" />
+          <webfeeds:cover image="${context.url.origin}${post.frontmatter.image}" />
           `,
     })),
 
