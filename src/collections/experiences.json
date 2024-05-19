@@ -1,23 +1,23 @@
 [
 	{
-		"dates": "June 2018 · Present",
-		"role": "Front-end Engineer",
-		"company": "Full Truck Alliance",
-		"description": "Responsible for customer service and CRM system front-end development.",
-		"logo": "/assets/images/experiences/fta.ico"
+		"dates": "June 2021 · Present",
+		"role": "Web Developer",
+		"company": "Fiverr",
+		"description": "Offering full stack web development services from small to medium projects",
+		"logo": "/assets/images/experiences/fiverr.png"
 	},
 	{
-		"dates": "July 2015 · June 2018",
-		"role": "Front-end Engineer",
-		"company": "YOHO!",
-		"description": "Responsible for mobile front-end development of e-commerce platform.",
-		"logo": "/assets/images/experiences/yoho.ico"
+		"dates": "July 2022 · Present",
+		"role": "Full Stack Engineer",
+		"company": "Upwork",
+		"description": "Working with comopany's and individual clients to deliver best development services",
+		"logo": "/assets/images/experiences/upwork.png"
 	},
 	{
-		"dates": "September 2014 · July 2015 ",
-		"role": "Node.JS Developer",
-		"company": "WuLian",
-		"description": "Intern, involved in the development of Internet of Things cloud systems.",
-		"logo": "/assets/images/experiences/wulian.ico"
+		"dates": "September 2021 · April 2024 ",
+		"role": "Laravel + React Developer",
+		"company": "The ArtPeople",
+		"description": "TheArtPeople is an institute educating kids to learn graphics and animation. I've created tools and website for this company.",
+		"logo": "/assets/images/experiences/the-art-people.png"
 	}
 ]

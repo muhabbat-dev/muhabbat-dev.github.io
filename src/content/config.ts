@@ -19,7 +19,6 @@ const projectCollection = defineCollection({
         description : z.string(),
         pubDate : z.date(),
         image : z.string(),
-        body : z.string(),
         link: z.string().url()
     })
 });

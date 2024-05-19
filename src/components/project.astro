@@ -1,5 +1,5 @@
 ---
-const { name, description, url, image } = Astro.props;
+const { name, description, url, image, pubDate } = Astro.props;
 ---
 
 <a
@@ -60,6 +60,8 @@ const { name, description, url, image } = Astro.props;
       <span class="text-sm text-neutral-600 dark:text-neutral-400"
         >{description}</span
       >
+      <br>
+      <span class="text-sm text-neutral-600 dark:text-neutral-400">Completed on  {pubDate}</span>
     </span>
   </span>
 </a>

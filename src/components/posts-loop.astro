@@ -9,8 +9,6 @@ const allBlog = (await getCollection('posts')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 ).slice(0, count);
 
-const url = Astro.site?.origin 
-console.log({url});
 ---
 
 {
