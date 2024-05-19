@@ -3,16 +3,23 @@ import Footer from "../components/footer.astro";
 import Header from "../components/header.astro";
 import SquareLines from "../components/square-lines.astro";
 import "../styles/global.css"
-const { title, meta } = Astro.props;
+const { title, meta, ogMeta } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     {meta.map((m : any) => <meta name={m.name} content={m.content} />)}
+    {ogMeta?.map((m : any) => <meta property={m.property} content={m.content} />)??null}
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Dev Mohib' Blogs"
+      href={`${Astro.url.origin}/rss.xml`}
+    />
     <!-- Used to add dark mode right away, adding here prevents any flicker -->
     <script>
       if (typeof Storage !== 'undefined') {
