@@ -14,7 +14,7 @@ const hasNext : boolean = allBlog.length > currentPage*postPerPage ? true : fals
 const hasPrevious : boolean = currentPage > 1 ? true : false
 ---
 
-<Layout title="Blog">
+<Layout title="Blog" meta={[]}>
   <section class="relative z-20 max-w-2xl mx-auto my-12 px-7 lg:px-0">
     <PageHeading
       title="Blog"

@@ -28,7 +28,7 @@ const allProjects = (await getCollection('projects')).sort(
           <Project
             name={project.data.title}
             description={project.data.description}
-            image={`projects/${project.data.image}`}
+            image={`/projects/${project.data.image}`}
             url={project.data.link}
             pubDate={project.data.pubDate.toDateString()}
           />

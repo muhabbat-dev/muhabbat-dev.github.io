@@ -9,7 +9,7 @@ const allProjects = (await getCollection('projects')).sort(
 
 ---
 
-<Layout title="My Projects">
+<Layout title="My Projects" meta={[]}>
   <section class="relative z-20 max-w-2xl mx-auto my-12 px-7 lg:px-0">
     <PageHeading
       title="My Projects"
@@ -25,7 +25,7 @@ const allProjects = (await getCollection('projects')).sort(
             <Project
               name={project.data.title}
               description={project.data.description}
-              image={`projects/${project.data.image}`}
+              image={`/projects/${project.data.image}`}
               url={project.data.link}
               pubDate={project.data.pubDate.toDateString()}
             />

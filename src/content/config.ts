@@ -9,6 +9,7 @@ const postCollection = defineCollection({
         pubDate : z.date(),
         image : z.string(),
         body : z.string().optional(),
+        keywords: z.string()
     })
 });
 
