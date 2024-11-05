@@ -7,6 +7,8 @@ const allBlog = (await getCollection('posts')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
+const allCategories = new Set((await getCollection('posts')).map(post => post.data.category));
+
 const currentPage : number = 1
 const nextPage : number = currentPage + 1
 const postPerPage : number = 3
@@ -20,6 +22,19 @@ const hasPrevious : boolean = currentPage > 1 ? true : false
       title="Blog"
       description="Dive into my musings on life and tech in my latest posts; a blend of introspection and innovation. Keep an eye out for fresh insights and updates!"
     />
+
+    <div class="flex flex-row flex-wrap">
+
+    {
+      Array.from(allCategories).map(value =><a 
+        type="submit" 
+        class="btn btn-active m-1 cursor-pointer"
+        href={`/blog/category/${value}`}
+        >
+          {value}
+        </a>)
+    }
+    </div>
 
     <div class="z-50 flex flex-col items-stretch w-full gap-5 my-8">
       {

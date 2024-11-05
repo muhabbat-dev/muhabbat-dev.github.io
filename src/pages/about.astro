@@ -7,10 +7,27 @@ import Layout from "../layouts/main.astro";
 
 <Layout title="About Me" meta={[]}>
   <section class="relative z-20 max-w-2xl mx-auto my-12 px-7 lg:px-0">
-    <PageHeading
-      title="About Me"
-      description="Hello 👋 I'm a Full Stack Developer and DevOps Engineer from Lahore, Pakistan. I'm passionate about building new products and learning new technology."
-    />
+    <div class="relative z-20 w-full mx-auto lg:mx-0">
+      <h2
+        class="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-3xl lg:text-4xl"
+      >
+      About Me
+      </h2>
+        <div
+          class="flex flex-row flex-wrap items-center mt-3 text-sm leading-6 text-neutral-600 dark:text-neutral-400 sm:mt-4 lg:mt-6 sm:leading-7 lg:leading-8 sm:text-base lg:text-lg"
+        >
+          <!-- <p> -->
+            Hello 👋 I'm a Full Stack Developer and DevOps Engineer from Pakistan 
+          <!-- </p>   -->
+          <img src="/assets/icons/pakistan-flag.svg" class="pakistan mx-1 -mb-1" alt="Pakistan flag"> 
+          <!-- <p> -->
+            I'm passionate about building new products and learning new technology.
+          <!-- </p> -->
+        </div>
+    </div>
+
+
+
 
     <img src="/assets/images/about.jpg" class="relative z-30 w-full my-10 rounded-xl" />
 
@@ -18,7 +35,7 @@ import Layout from "../layouts/main.astro";
     <p
       class="text-sm leading-6 text-gray-600 dark:text-neutral-400 sm:leading-7 lg:leading-8 sm:text-base lg:text-lg"
     >
-      Front-end developer 🧑🏻‍💻, Back-end developer 🤷🏻‍♂️, DevOps Engineer 🤦🏻‍♂️.
+      Software Engineer 🧑🏻‍💻, Full Stack Developer 🤷🏻‍♂️, DevOps Engineer 🤦🏻‍♂️.
     </p>
 
     <h2
@@ -67,7 +84,7 @@ import Layout from "../layouts/main.astro";
       >, or you can send me an email at <a href="mailto:dev.mohib@gmail.com" class="text-indigo-600 underline"
         >dev.mohib@gmail.com</a
       > and I'll be sure to get back to you. <br>
-      You can also find my profile at <a class="text-indigo-600 underline" href="https://bold.pro/my/dev-mohib-240520140818" target="_blank">bold.pro</a>
+      If you are looking to work with me, You can see my services on <a class="text-indigo-600 underline" href="https://devmohib.contra.com/" target="_blank">contra</a>
     </p>
   </section>
 </Layout>

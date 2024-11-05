@@ -1,5 +1,5 @@
 .btn{
-    @apply block w-full px-4 py-2 mt-5 text-xs font-semibold text-center duration-300 ease-out border rounded 
+    @apply block px-4 py-2 mt-5 text-xs font-semibold text-center duration-300 ease-out border rounded dark:text-white
 }
 
 .btn-active{
@@ -7,4 +7,9 @@
 }
 .btn-disabled{
     @apply cursor-not-allowed text-black  dark:bg-gray-300
+}
+.pakistan {
+    width: 20px;
+    height: auto; 
+    vertical-align: middle
 }

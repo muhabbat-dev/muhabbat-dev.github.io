@@ -1,0 +1,79 @@
+---
+import { getCollection } from "astro:content";
+import PageHeading from "@/components/page-heading.astro";
+import PostCard from "@/components/post-card.astro";
+import Layout from "@/layouts/main.astro";
+const allCategories = Array.from(new Set((await getCollection('posts')).map(post => post.data.category)))
+export async function getStaticPaths() {
+    const allCategories = Array.from(new Set((await getCollection('posts')).map(post => post.data.category)))   
+.map(cat => ({
+    params : { slug : cat, category : cat}
+}));
+
+return allCategories
+}
+const { category } = Astro.params
+
+const allBlog = (await getCollection('posts')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+).filter(blog => blog.data.category == category);
+
+const currentPage : number = 1
+const nextPage : number = currentPage + 1
+const postPerPage : number = 3
+const hasNext : boolean = allBlog.length > currentPage*postPerPage ? true : false
+const hasPrevious : boolean = currentPage > 1 ? true : false
+
+---
+<Layout title="Blog" meta={[]}>
+    <section class="relative z-20 max-w-2xl mx-auto my-12 px-7 lg:px-0">
+      <PageHeading
+        title="Blog"
+        description="Dive into my musings on life and tech in my latest posts; a blend of introspection and innovation. Keep an eye out for fresh insights and updates!"
+      />
+  
+      <div class="flex flex-row flex-wrap">
+  
+      {
+        allCategories.map(value =><a 
+          type="submit" 
+          class={`btn m-1 cursor-pointer ${category != value && 'btn-active'}`}
+          href={category == value ? '#':  `/blog/category/${value}`}
+          >
+            {value}
+          </a>)
+      }
+      </div>
+  
+      <div class="z-50 flex flex-col items-stretch w-full gap-5 my-8">
+        {
+          allBlog.slice(0, 3).map(p => {
+            return (
+              <div>
+                <PostCard post={p.data} link={`/blog/${p.slug}`}/>
+              </div>
+            )
+          })
+        }
+  <!-- pagination -->
+          <div class="flex justify-center">
+              <div class="flex [&_a]:mx-1 w-1/3">
+                  <a
+                      type="submit"
+                      class={`btn ${hasPrevious ? "btn-active" : "btn-disabled"}`}
+                  >
+                      Previous
+                  </a>
+                  <a
+                      type="submit"
+                      class={`btn ${hasNext ? "btn-active" : "btn-disabled"}`}
+                      href=`/blog/${hasNext ? 'category/'+category + '/' + nextPage: 'page/'+currentPage}`
+                  >
+                      Next
+                  </a>
+              </div>
+          </div>
+      </div>
+  </section>
+  </Layout>
+  

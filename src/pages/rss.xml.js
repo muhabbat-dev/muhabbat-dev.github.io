@@ -9,7 +9,7 @@ export const GET = async(context) => {
   const allBlog = await getCollection("posts")
 
   return rss({
-    title: 'DevMohib',
+    title: 'Muhabbat Ali',
     description: 'Programming and Tech blogs',
     site:  context.url.origin,
     xmlns: {

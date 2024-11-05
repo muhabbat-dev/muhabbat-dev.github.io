@@ -9,7 +9,9 @@ const postCollection = defineCollection({
         pubDate : z.date(),
         image : z.string(),
         body : z.string().optional(),
-        keywords: z.string()
+        keywords: z.string(),
+        tags: z.array(z.string()),
+        category: z.string().default('All')
     })
 });
 
@@ -20,7 +22,8 @@ const projectCollection = defineCollection({
         description : z.string(),
         pubDate : z.date(),
         image : z.string(),
-        link: z.string().url().optional()
+        link: z.string().url().optional(),
+        category: z.string().default('Web')
     })
 });
 
