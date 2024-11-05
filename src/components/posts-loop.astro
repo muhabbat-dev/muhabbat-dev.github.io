@@ -4,7 +4,7 @@ import posts from "../collections/content/post.json";
 
 const { count } = Astro.props;
 
-const postsLoop = posts.slice(0, count);
+// const postsLoop = posts.slice(0, count);
 const allBlog = (await getCollection('posts')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 ).slice(0, count);

@@ -1,8 +1,8 @@
 ---
-import { getCollection } from "astro:content"
+// import { getCollection } from "astro:content"
 
 
-const allBlogs = (await getCollection("posts")).map(post => ({title : post.data.title, link : Astro.url.origin + "/blog/" + post.slug}))
+// const allBlogs = (await getCollection("posts")).map(post => ({title : post.data.title, link : Astro.url.origin + "/blog/" + post.slug}))
 ---
 
 <div class="z-50 absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center opacity-40 bg-black h-screen w-screen">
