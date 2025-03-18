@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+	@apply h-full antialiased scroll-smooth;
+}
+
+body {
+	@apply h-full scroll-smooth font-sans text-gray-700;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	@apply font-bold break-words font-caveat;
+}
+
+h1,
+.h1 {
+	@apply text-5xl lg:text-7xl;
+}
+
+h2,
+.h2 {
+	@apply text-5xl lg:text-6xl;
+}
+
+h3,
+.h3 {
+	@apply text-4xl lg:text-5xl;
+}
+
+h4,
+.h4 {
+	@apply text-3xl lg:text-4xl;
+}
+
+h5,
+.h5 {
+	@apply text-2xl lg:text-3xl;
+}
+
+h6,
+.h6 {
+	@apply text-xl lg:text-2xl;
+}
+
+p {
+	@apply leading-relaxed;
+}
+
+.button {
+	@apply rounded-xl px-4 py-3 text-lg transition duration-300 font-bold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2;
+}
+
+.button-teal {
+	@apply bg-teal-500 hover:bg-teal-500/80 text-white focus-visible:outline-teal-500;
+}
+
+.button-fuchsia {
+	@apply bg-fuchsia-500 hover:bg-fuchsia-500/80 text-white focus-visible:outline-fuchsia-500;
+}
+
+.button-white {
+	@apply bg-white text-gray-700 hover:bg-white/80 focus-visible:outline-white;
+}
+
+.menu-item-highlighted.menu-item-highlighted {
+	@apply text-white bg-teal-500 px-4 rounded-full py-1.5 hover:bg-opacity-80 hover:text-white;
+}
+
+.menu-item-active.menu-item-highlighted {
+	@apply hover:text-white;
+}
+
+.menu-item-active:not(.menu-item-highlighted) {
+	@apply text-fuchsia-500 font-bold;
+}
+
+[x-cloak] {
+	display: none !important;
+}
+
+main > section:first-child {
+	padding-top: var(--header-height);
+}
+
+section.bg-white + section.bg-white > .container {
+	@apply pt-0;
+}
+
+input,
+textarea {
+	@apply border border-gray-300 rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-teal-500;
+}
+
+label {
+	@apply block text-sm/6 font-semibold;
+}
+
+/* Swiper */
+.swiper-pagination-bullet-active.swiper-pagination-bullet-active {
+	@apply bg-fuchsia-500;
+}
+
+body,
+section.bg-white {
+	background-image: url('/pattern.jpg');
+	background-repeat: repeat;
+}
+
+/* caveat-brush-regular - latin */
+@font-face {
+	font-display: swap;
+	font-family: "Caveat Brush";
+	font-style: normal;
+	font-weight: 400;
+	src: url("/fonts/caveat/caveat-brush-v11-latin-regular.woff2") format("woff2");
+}
