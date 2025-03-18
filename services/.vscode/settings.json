@@ -1,5 +1,0 @@
-{
-    "css.customData": [".vscode/tailwind.json"],
-    "html.format.contentUnformatted": "pre,code,textarea",
-    "html.format.unformatted": "textarea"
-}
