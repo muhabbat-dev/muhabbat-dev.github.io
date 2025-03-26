@@ -25,3 +25,5 @@ pnpm-debug.log*
 
 # draft blog
 src/content/drafts/*
+
+node_modules
