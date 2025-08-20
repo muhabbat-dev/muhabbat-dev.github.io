@@ -1,0 +1,718 @@
+---
+draft: false
+heroImage: /src/assets/images/2024/11/2024-11-15-flutter-typesense-ecommerce.jpg
+title: How to integrate Typesense Search API in flutter using bloc
+category: Mobile Development
+description: Building Search eCommerce App using Flutter and Typesense
+pubDate: 2024-11-29T19:00:00.000Z
+tags:
+  - flutter
+  - advanced
+keywords:
+  - typesense ecommerce search module
+  - how to implement search api in flutter
+  - flutter typesense api
+---
+
+# Overview
+
+Typesense is a great open-source alternative for building lightning-fast search features for your applications. It offers many search features like Typo Tolerance, Synonyms, Filtering & Faceting, Dynamic Sorting, and many more. In this article, I will write a step-by-step guide to implement Typesense in the Flutter application completely from scratch. The first part of the article is about installing the Typesense server and uploading some mock data. I will use docker to install the typesense server. In the second part, I will create a Flutter application from scratch and implement Typesense using typesense_api package. I will also use bloc library for managing the state.
+
+![](/src/assets/images/body/2024/11/2024-11-30-flutter-typesense-1.gif)
+
+## Install Typesense
+
+I will use docker-compose to install and run the typesense on localhost. You can read the full guide to install typesense using docker here [https://typesense.org/docs/guide/install-typesense.html#docker](https://typesense.org/docs/guide/install-typesense.html#docker). Alternatively, Create a docker-compose.yml at the root of your project directory and add the following code.
+
+```yaml
+services:
+typesense:
+image: typesense/typesense: 27.1
+restart: on-failure
+ports:
+- "8108:8108"
+volumes:
+- ./ typesense-data: /data
+command: '--data-dir/data --api-key=xyz --enable-cors'
+```
+
+Make sure that you have installed docker and docker-compose before running the script. You can read more about the installation of docker-compose here [https://docs.docker.com/compose/install](https://docs.docker.com/compose/install/). Run docker compose up -d to pull the image and run it on your localhost.
+
+### Collection Schema
+
+Typesense cluster store data in one or more collections and you can store many documents with the same structure. I will define a schema to store products for the eCommerce store. I will use this dataset for this application [https://raw.githubusercontent.com/algolia/datasets/refs/heads/master/ecommerce/bestbuy_seo.json](https://raw.githubusercontent.com/algolia/datasets/refs/heads/master/ecommerce/bestbuy_seo.json) and the schema is required to be registered in Typesense server. You can read more about creating collection here [https://typesense.org/docs/27.1/api/collections.html#create-a-collection](https://typesense.org/docs/27.1/api/collections.html#create-a-collection). Run the following command to register the schema.
+
+```shell
+curl - X POST "http://localhost:8108/collections" \
+-H "X-TYPESENSE-API-KEY: xyz" \
+-H "Content-Type: application/json" \
+-d '{
+"name": "products",
+  "fields": [
+    { "name": "name", "type": "string" },
+    { "name": "shortDescription", "type": "string", "optional": true },
+    { "name": "bestSellingRank", "type": "int32", "optional": true },
+    { "name": "thumbnailImage", "type": "string", "optional": true },
+    { "name": "salePrice", "type": "float" },
+    { "name": "manufacturer", "type": "string", "optional": true },
+    { "name": "url", "type": "string", "optional": true },
+    { "name": "type", "type": "string", "optional": true },
+    { "name": "image", "type": "string", "optional": true },
+    { "name": "customerReviewCount", "type": "int32", "optional": true },
+    { "name": "shipping", "type": "string", "optional": true },
+    { "name": "salePrice_range", "type": "string", "otional": true },
+    { "name": "objectID", "type": "string" },
+    { "name": "categories", "type": "string[]", "facet": true, "optional": true }
+  ],
+    "default_sorting_field": "salePrice"
+}'
+```
+
+### Import JSON file
+
+Since we have JSON file containing the products for our store that I've mentioned above, Now, import the product data into Typesense collection named products. Before sending the JSON file to the server using the curl command, the JSON file must be converted into JSONL format since Typesense supports JSON Lines. You can read the guide about importing JSON here [https://typesense.org/docs/27.1/api/documents.html#import-a-json-file](https://typesense.org/docs/27.1/api/documents.html#import-a-json-file). Alternatively, you can convert the JSON file using online tools like [https://yourgpt.ai/tools/json-to-jsonline](https://yourgpt.ai/tools/json-to-jsonline). The JSONL file that I've used in this application can be downloaded from the repository here [https://github.com/dev-mohib/flutter-typesense-starter/blob/main/products.jsonl](https://github.com/dev-mohib/flutter-typesense-starter/blob/main/products.jsonl) . Now to upload this file to Typesense server, Run this simple curl command,
+
+```shell
+curl - X POST "http://localhost:8108/collections/products/documents/import?action=upsert" \
+-H "X-TYPESENSE-API-KEY: xyz" \
+-H "Content-Type: text/plain" \
+--data - binary @products.jsonl
+```
+
+Now that you have a Typesense server with products, You can now focus on frontend part to implement the search functionalities.
+
+## Flutter Setup
+
+Create a new Flutter project by running `flutter create mystore`. Also, add bloc library and Typesense package by running `flutter pub add bloc flutter_bloc typesense` flutter bloc will be used to manage the state globally and manage the business logic of components separately and the Typesense package will be used to connect with the Typesense server. You can read everything about flutter bloc here [https://github.com/felangel/bloc/tree/master/packages/flutter_bloc](https://github.com/felangel/bloc/tree/master/packages/flutter_bloc) and the Typesense package here [https://pub.dev/packages/typesense](https://pub.dev/packages/typesense).
+
+### Products model
+
+Typesense returns an array of products according to the schema defined above when we call a search request. To manage the objects in flutter, we need to define the product model file. Create lib/models/product_model.dart file and add the following code
+
+```dart
+class ProductModel {
+  final String name;
+  final String?shortDescription;
+  final int?bestSellingRank;
+  final String?thumbnailImage;
+  final double salePrice;
+  final String?manufacturer;
+  final String url;
+  final String?type;
+  final String?image;
+  final int?customerReviewCount;
+  final String?shipping;
+  final String?salePriceRange;
+  final String?objectID;
+  final List<dynamic>?categories;
+
+  ProductModel({
+    required this.name,
+    required this.shortDescription,
+    required this.bestSellingRank,
+    required this.thumbnailImage,
+    required this.salePrice,
+    required this.manufacturer,
+    required this.url,
+    required this.type,
+    required this.image,
+    required this.customerReviewCount,
+    required this.shipping,
+    required this.salePriceRange,
+    required this.objectID,
+    required this.categories,
+  });
+
+  static ProductModel fromJson(Map<String, dynamic> json) => ProductModel(
+    name: json['name'],
+    shortDescription: json['shortDescription'],
+    bestSellingRank: json['bestSellingRank'],
+    thumbnailImage: json['thumbnailImage'],
+    salePrice: json['salePrice'],
+    manufacturer: json['manufacturer'],
+    url: json['url'],
+    type: json['type'],
+    image: json['image'],
+    customerReviewCount: json['customerReviewCount'],
+    shipping: json['shipping'],
+    salePriceRange: json['salePriceRange'],
+    objectID: json['objectID'],
+    categories: json['categories'],
+  );
+}
+
+```
+
+### Typesense Configuration
+
+Create a new file at lib/utils/typesense.dart and add the following code to register typesense client.
+
+```dart
+import 'package:typesense/typesense.dart';
+
+const String _host = 'localhost';
+const _protocol = Protocol.http;
+const int _port = 8108;
+
+final config = Configuration(
+  // Api key
+  'xyz',
+  nodes: {
+  Node(
+    _protocol,
+    _host,
+    port: _port,
+  ),
+  Node.withUri(
+    Uri(
+      scheme: 'http',
+      host: _host,
+      port: _port,
+    ),
+  ),
+  Node(
+    _protocol,
+    _host,
+    port: _port,
+  ),
+},
+  numRetries: 3,
+  connectionTimeout: const Duration(seconds: 2),
+);
+
+final typesenseClient = Client(config);
+
+```
+
+### Typesense Repository
+
+Since We're using bloc library to manage the state of the application. We'll use this architecture [https://bloclibrary.dev/architecture/](https://bloclibrary.dev/architecture/) to manage our application. I will implement a repository and data provider layer in this step by creating a new file at lib/repository/typesense_repository.dart
+
+```dart
+import 'package:typesense_flutter/bloc/search_filter_cubit.dart';
+import 'package:typesense_flutter/models/product_model.dart';
+import 'package:typesense_flutter/utils/typesense.dart';
+
+class TypesenseRepository {
+  Future<List<ProductModel>> searchProduct(
+    SearchFilterState filterState) async {
+      final searchParameters = {
+      'q': filterState.query,
+    'query_by': 'name',
+    'sort_by':
+    'customerReviewCount:${filterState.bestSellingProducts ? 'asc' : 'desc'}',
+    };
+
+    if (filterState.categories.isNotEmpty) {
+      searchParameters.addAll({
+        'filter_by':
+          'salePrice:[${filterState.minPrice}..${filterState.maxPrice}]&&categories:${filterState.categories}',
+      });
+    } else {
+      searchParameters.addAll({
+        'filter_by':
+          'salePrice:[${filterState.minPrice}..${filterState.maxPrice}]',
+      });
+    }
+
+    List<ProductModel> products = [];
+
+      final response = await typesenseClient
+      .collection('products')
+      .documents
+      .search(searchParameters);
+
+      for (var element in response['hits']) {
+        products.add(ProductModel.fromJson(element['document']));
+    }
+      return products;
+  }
+
+      Future<List<String>> getCategories() async {
+        final searchParameters = {
+          "q": "*",
+        "query_by": "name",
+        "facet_by": "categories",
+        'max_facet_values': '99999'
+    };
+        List<String> categories = [];
+          final response = await typesenseClient
+          .collection('products')
+          .documents
+          .search(searchParameters);
+
+          for (var element in response['facet_counts']) {
+      for (var element in element['counts']) {
+            categories.add(element['value']);
+      }
+    }
+          return categories;
+  }
+}
+
+```
+
+We have defined some functions to send request to typesense server by using typesense client which is initalized in above step and parse the response in dart objects by using the product model class.
+
+### Bloc implementation
+
+Now, Let's dive into the business logic layer to send requests from the UI to the data repository and update the state of the application according to the response i.e. loading, loaded, error, etc. Read more about business logic here [https://bloclibrary.dev/architecture/#business-logic-layer](https://bloclibrary.dev/architecture/#business-logic-layer). For our eCommerce application, I'm using two cubits, one for managing product search results and the other for search filter state. Create a new file at lib/bloc/search_filter_cubit.dart and add
+
+```dart
+import 'package:bloc/bloc.dart';
+
+class SearchFilterState {
+  final String query;
+  final int minPrice;
+  final int maxPrice;
+  final List<String> categories;
+  final bool bestSellingProducts;
+
+  SearchFilterState(
+    { required this.query,
+      required this.minPrice,
+      required this.maxPrice,
+      required this.categories,
+      required this.bestSellingProducts });
+
+  SearchFilterState copyWith({
+        String? query,
+        int? minPrice,
+        int? maxPrice,
+        List<String>? categories,
+          bool ? bestSellingProducts,
+  }) {
+  return SearchFilterState(
+    query: query ?? this.query,
+    minPrice: minPrice ?? this.minPrice,
+    maxPrice: maxPrice ?? this.maxPrice,
+    categories: categories ?? this.categories,
+    bestSellingProducts: bestSellingProducts ?? this.bestSellingProducts,
+  );
+}
+}
+
+class SearchFilterCubit extends Cubit<SearchFilterState> {
+  SearchFilterCubit()
+    : super(
+      SearchFilterState(
+        query: '',
+        minPrice: 1,
+        maxPrice: 100000,
+        categories: [],
+        bestSellingProducts: false,
+      ),
+    );
+
+void setSearchQuery(String query) {
+  emit(state.copyWith(query: query));
+}
+
+void setMinPrice(String value) {
+  emit(state.copyWith(minPrice: int.parse(value)));
+}
+
+void setMaxPrice(String value) {
+  emit(state.copyWith(maxPrice: int.parse(value)));
+}
+
+void setBestSellingProducts(bool option) {
+  emit(state.copyWith(bestSellingProducts: option));
+}
+
+void setCategories(List <String> categories) {
+  emit(state.copyWith(categories: categories));
+}
+}
+
+```
+
+Here, I've defined two classes SearchFilterState and SearchFilterCubit. SearchFilterState class is the actual state of this cubit and SearchFilterCubit is a cubit class inherited from the bloc library to extend the functionalities such as emit function, and state object. This cubit has no connection with the repository or external data provider because I'm using this cubit the save the UI state of search filters such as query, minPrice, maxPrice, and categories. To interact with the repository and get the products, Create another cubit at lib/bloc/produc_cubit.dart and add the following code.
+
+```dart
+import 'package:bloc/bloc.dart';
+import 'package:typesense_flutter/bloc/search_filter_cubit.dart';
+import 'package:typesense_flutter/models/product_model.dart';
+import 'package:typesense_flutter/repository/typesense_repository.dart';
+enum RequestStatus { idle, loading, loaded, error }
+class ProductState {
+  final RequestStatus status;
+  final List<ProductModel> products;
+  final String?error;
+  final List<String> categories;
+  final RequestStatus categoryStatus;
+  ProductState({
+    required this.status,
+    required this.products,
+    required this.error,
+    required this.categories,
+    required this.categoryStatus,
+  });
+  ProductState copyWith({
+    RequestStatus? status,
+    List<ProductModel>? products,
+      String ? error,
+      List < String >? categories,
+      RequestStatus ? categoryStatus,
+  }) =>
+ProductState(
+  status: status ?? this.status,
+  products: products ?? this.products,
+  error: error ?? this.error,
+  categories: categories ?? this.categories,
+  categoryStatus: categoryStatus ?? this.categoryStatus,
+);
+}
+
+class ProductCubit extends Cubit<ProductState> {
+  final TypesenseRepository _typesenseRepository = TypesenseRepository();
+  ProductCubit()
+    : super(
+      ProductState(
+        status: RequestStatus.idle,
+        products: [],
+        error: '',
+        categories: [],
+        categoryStatus: RequestStatus.idle,
+      ),
+        );
+void searchProduct(SearchFilterState filterState) async {
+  emit(state.copyWith(status: RequestStatus.loading));
+  try {
+      final response = await _typesenseRepository.searchProduct(filterState);
+    emit(state.copyWith(status: RequestStatus.loaded, products: response));
+  } catch (e) {
+    emit(state.copyWith(status: RequestStatus.error, error: e.toString()));
+  }
+}
+void getCategories() async {
+  emit(state.copyWith(categoryStatus: RequestStatus.loading));
+  try {
+      final response = await _typesenseRepository.getCategories();
+    emit(state.copyWith(
+      categoryStatus: RequestStatus.loaded, categories: response));
+  } catch (e) {
+    emit(state.copyWith(
+      categoryStatus: RequestStatus.error, error: e.toString()));
+  }
+}
+}
+
+```
+
+Finally, wrap the application with cubits and the repository defined above, by using MultiBlocProvider and RepositoryPrivider. The final code after wrapping with prviders at lib/main.dart will look like this
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:typesense_flutter/bloc/product_cubit.dart';
+import 'package:typesense_flutter/bloc/search_filter_cubit.dart';
+import 'package:typesense_flutter/repository/typesense_repository.dart';
+import 'package:typesense_flutter/search_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({ super.key });
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter eCommerce',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: RepositoryProvider < TypesenseRepository > (
+        create: (context) => TypesenseRepository(),
+      child: MultiBlocProvider(
+        providers: [
+        BlocProvider < ProductCubit > (
+          create: (BuildContext context) => ProductCubit(),
+    ),
+      BlocProvider < SearchFilterCubit > (
+        create: (BuildContext context) => SearchFilterCubit(),
+            ),
+          ],
+    child: SearchScreen(),
+        ),
+      ),
+    );
+  }
+}
+
+```
+
+### UI Implementation
+
+This is the final step of the article to write some UI code to display the search flow and product results. I will create two main UI components. One for displaying the product search result state, i.e., loading, loaded, error. The second UI for displaying a bottom sheet with search filter options such as category, min Price, max price, etc.
+
+### Search View
+
+Create a new file at lib/search_view\.dart and add the following code.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:typesense_flutter/bloc/product_cubit.dart';
+import 'package:typesense_flutter/bloc/search_filter_cubit.dart';
+import 'package:typesense_flutter/widgets/search_bottom_sheet.dart';
+
+
+class SearchScreen extends StatefulWidget {
+  @override
+  _SearchScreenState createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  void _performSearch() {
+    final searchFilterCubit = context.read < SearchFilterCubit > ();
+  searchFilterCubit.setSearchQuery(_searchController.text);
+  context.read < ProductCubit > ().searchProduct(searchFilterCubit.state);
+}
+
+@override
+void initState() {
+  super.initState();
+  context.read < ProductCubit > ().getCategories();
+}
+
+void _showFilters(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+  builder: (ctx) {
+    return BlocProvider.value(
+      value: BlocProvider.of < SearchFilterCubit > (context),
+      child: BlocProvider.value(
+        value: BlocProvider.of < ProductCubit > (context),
+        child: SearchBottomSheet()));
+  },
+    );
+}
+
+@override
+  Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text("Search"),
+    ),
+    body: Padding(
+      padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: "Search products...",
+              prefixIcon: Icon(Icons.search),
+              border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+          ),
+          SizedBox(height: 16),
+          Row(
+            children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  _showFilters(context);
+                },
+                icon: Icon(Icons.filter_list),
+                label: Text("Filters"),
+              ),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _performSearch,
+                child: Text("Search"),
+              ),
+            ),
+          ],
+          ),
+          SizedBox(height: 16),
+          Expanded(
+            child: BlocBuilder < ProductCubit, ProductState > (
+              builder: (context, state) {
+                if (state.status == RequestStatus.idle) {
+                  return const Center(
+                    child: Text(
+                      "Search Product",
+                      style: TextStyle(color: Colors.grey),
+                      ),
+                    );
+}
+if (state.status == RequestStatus.loading) {
+  return const Center(
+    child: CircularProgressIndicator(),
+                    );
+}
+
+if (state.status == RequestStatus.loaded) {
+  return ListView.builder(
+    itemCount: state.products.length,
+    itemBuilder: (context, index) {
+      final result = state.products[index];
+      return Card(
+        child: ListTile(
+          leading: Image.network(result.thumbnailImage ??
+            'https://via.placeholder.com/150'),
+          title: Text(result.name),
+          subtitle: Text("Price: \$${result.salePrice}"),
+        ),
+      );
+    },
+  );
+}
+return Container();
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+```
+
+![](/src/assets/images/body/2024/11/2024-11-30-flutter-typesense-3.png)
+
+### Search Bottomsheet
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:typesense_flutter/bloc/product_cubit.dart';
+import 'package:typesense_flutter/bloc/search_filter_cubit.dart';
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
+
+class SearchBottomSheet extends StatefulWidget {
+  const SearchBottomSheet({super.key});
+
+  @override
+  State<SearchBottomSheet> createState() => _SearchBottomSheetState();
+}
+
+class _SearchBottomSheetState extends State<SearchBottomSheet> {
+  late TextEditingController _minPriceController;
+  late TextEditingController _maxPriceController;
+
+  @override
+  void initState() {
+    super.initState();
+    final searchFilterState = context.read<SearchFilterCubit>().state;
+    _minPriceController =
+        TextEditingController(text: searchFilterState.minPrice.toString());
+    _maxPriceController =
+        TextEditingController(text: searchFilterState.maxPrice.toString());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SearchFilterCubit, SearchFilterState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Filters", style: Theme.of(context).textTheme.headlineSmall),
+              SizedBox(height: 16),
+              Text("Price Range"),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(labelText: "Min Price"),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        context.read<SearchFilterCubit>().setMinPrice(value);
+                      },
+                      controller: _minPriceController,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(labelText: "Max Price"),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        context.read<SearchFilterCubit>().setMaxPrice(value);
+                      },
+                      controller: _maxPriceController,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+              // DropDown
+              BlocBuilder<ProductCubit, ProductState>(
+                builder: (context, productCubit) {
+                  if (productCubit.categoryStatus == RequestStatus.loading) {
+                    return const CircularProgressIndicator();
+                  }
+                  if (productCubit.categoryStatus == RequestStatus.loaded) {
+                    return CustomDropdown<String>.multiSelectSearch(
+                      hintText: 'Select Categories',
+                      items: productCubit.categories,
+                      onListChanged: (value) {
+                        context.read<SearchFilterCubit>().setCategories(value);
+                      },
+                      initialItems:
+                          context.read<SearchFilterCubit>().state.categories,
+                    );
+                  }
+                  return Container();
+                },
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: state.bestSellingProducts,
+                    onChanged: (value) {
+                      context
+                          .read<SearchFilterCubit>()
+                          .setBestSellingProducts(value ?? false);
+                    },
+                  ),
+                  Text("Sort by Best Selling Products")
+                ],
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close the bottom sheet
+                },
+                child: Text("Apply Filters"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+```
+
+![](/src/assets/images/body/2024/11/2024-11-30-flutter-typesense-2.png)
+
+Use this code to display a bottom sheet to display the filters view where the user can apply some filters on product searches. I have also used CustomDropdown package to quickly implement multi-select dropdown functionality. Read more about this package here [https://pub.dev/packages/animated_custom_dropdown](https://pub.dev/packages/animated_custom_dropdown)
+
+## Conclusion
+
+You have successfully built a typesense flutter starter after following this guide. You can add more functionalities by adding more facets and filters or try more complex features such as nested collections etc. You can get the complete source code of this project here [https://github.com/dev-mohib/flutter-typesense-starter](https://github.com/dev-mohib/flutter-typesense-starter)

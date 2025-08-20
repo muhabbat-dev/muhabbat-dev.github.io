@@ -30,7 +30,11 @@ const allProjects = (await getCollection('projects')).sort(
             description={project.data.description}
             image={`/projects/${project.data.image}`}
             url={project.data.link}
-            pubDate={project.data.pubDate.toDateString()}
+            pubDate={project.data.pubDate.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+              })}
           />
         )
       })

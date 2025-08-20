@@ -1,34 +1,119 @@
-import { defineConfig } from "tinacms";
+import { CATEGORIES } from '../src/data/categories.ts'
+import { defineConfig } from 'tinacms'
 
 // Your hosting provider likely exposes this as an environment variable
-const branch =
-  process.env.GITHUB_BRANCH ||
-  process.env.VERCEL_GIT_COMMIT_REF ||
-  process.env.HEAD ||
-  "main";
+const branch = process.env.HEAD || process.env.VERCEL_GIT_COMMIT_REF || 'main'
 
 export default defineConfig({
-  branch,
+	branch,
+	clientId: process.env.PUBLIC_TINA_CLIENT_ID, // Get this from tina.io
+	token: process.env.TINA_TOKEN, // Get this from tina.io
 
-  // Get this from tina.io
-  clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
-  // Get this from tina.io
-  token: process.env.TINA_TOKEN,
-
-  build: {
-    outputFolder: "admin",
-    publicFolder: "public",
-  },
-  media: {
-    tina: {
-      mediaRoot: "",
-      publicFolder: "public",
-    },
-  },
-  // See docs on content modeling for more info on how to setup new content models: https://tina.io/docs/schema/
-  schema: {
-    collections: [
-      {
+	build: {
+		outputFolder: 'admin',
+		publicFolder: 'public'
+	},
+	media: {
+		tina: {
+			mediaRoot: '/src/assets/images',
+			publicFolder: ''
+		}
+	},
+	schema: {
+		collections: [
+			{
+				name: 'post',
+				label: 'Blog Post',
+				path: 'src/content/blog',
+				format: 'mdx',
+				fields: [
+					{
+						name: 'draft',
+						label: 'Draft',
+						type: 'boolean',
+						description: 'If this is checked the post will not be published'
+					},
+					{
+						type: 'image',
+						label: 'Cover Image',
+						required: true,
+						name: 'heroImage',
+						description: 'The image used for the cover of the post'
+					},
+					{
+						type: 'string',
+						name: 'title',
+						label: 'Title',
+						isTitle: true,
+						required: true
+					},
+					{
+						type: 'string',
+						required: true,
+						name: 'category',
+						label: 'Category',
+						description: 'Select an category for this post',
+						options: [...CATEGORIES]
+					},
+					{
+						type: 'string',
+						label: 'Description',
+						required: true,
+						name: 'description',
+						description: 'A short description of the post'
+					},
+					{
+						type: 'datetime',
+						name: 'pubDate',
+						label: 'Publication Date',
+						required: true
+					},
+					{
+						type: 'rich-text',
+						label: 'Body',
+						name: 'SButton',
+						isBody: true,
+						templates: [
+							// Custom Components
+							{
+								label: 'SButton',
+								name: 'SButton',
+								fields: [
+									{
+										type: 'rich-text',
+										label: 'SButton',
+										name: 'children',
+										isBody: true
+									}
+								]
+							}
+						]
+					},
+					{
+						type: 'string',
+						name: 'tags',
+						required: true,
+						label: 'Tags',
+						description: 'Tags for this post',
+						list: true,
+						ui: {
+							component: 'tags'
+						}
+					},
+					{
+						type: 'string',
+						name: 'keywords',
+						required: true,
+						label: 'Keywords',
+						description: 'Keywords for meta tag',
+						list: true
+						// ui: {
+						// 	component: 'tags'
+						// }
+					}
+				]
+			},
+			{
         name: "project",
         label: "Projects",
         path: "content/projects",
@@ -151,26 +236,6 @@ export default defineConfig({
         ],
       },
       {
-        name: "post",
-        label: "Posts",
-        path: "content/posts",
-        fields: [
-          {
-            type: "string",
-            name: "title",
-            label: "Title",
-            isTitle: true,
-            required: true,
-          },
-          {
-            type: "rich-text",
-            name: "body",
-            label: "Body",
-            isBody: true,
-          },
-        ],
-      },
-      {
         label: 'Site Settings',
         name: 'siteSettings',
         path: 'content/settings',
@@ -211,6 +276,55 @@ export default defineConfig({
               }
             ]
           },
+		  {
+            type: 'object',
+            name: "menu",
+            list: true,
+            fields: [
+              {
+                type: 'string',
+                name: 'name',
+                label: 'Name'
+              },
+              {
+                type: 'string',
+                name: 'path',
+                label: 'Path'
+              }
+            ]
+          },
+		  {
+            type: 'object',
+            name: "experience",
+            list: true,
+            fields: [
+              {
+                type: 'string',
+                name: 'dates',
+                label: 'Date Duration'
+              },
+              {
+                type: 'string',
+                name: 'role',
+                label: 'Role'
+              },
+			  {
+                type: 'string',
+                name: 'company',
+                label: 'Company'
+              },
+			  {
+                type: 'string',
+                name: 'description',
+                label: 'Description'
+              },
+			  {
+                type: 'string',
+                name: 'logo',
+                label: 'Logo'
+              },
+            ]
+          },
         ],
         ui: {
           allowedActions: {
@@ -218,7 +332,6 @@ export default defineConfig({
             delete: false,
           },
         },
-      },
-    ],
-  },
-});
+      },]
+	}
+})

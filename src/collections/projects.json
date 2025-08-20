@@ -1,5 +1,11 @@
 [
 	{
+		"name": "LA Apany",
+		"description": "Lease Contract Management System",
+		"image": "/projects/augle.gif",
+		"url": "https://ltapany.vercel.app/"
+	},
+	{
 		"name": "Motionayers",
 		"description": "Image to Animation tool",
 		"image": "/projects/motionlayer.gif",

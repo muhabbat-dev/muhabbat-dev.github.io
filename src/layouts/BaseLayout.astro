@@ -1,0 +1,67 @@
+---
+import BaseHead from '@/components/BaseHead'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import ProviderTheme from '@/components/ProviderTheme'
+import ProviderAnimations from '@/components/ProviderAnimations'
+// import TwSizeIndicator from '@/components/TwSizeIndicator'
+// import EditBlog from '@/components/editBlog'
+const { title, description, image, articleDate, keywords } = Astro.props
+---
+
+<html lang='en' class='scroll-smooth'>
+	<head>
+		<BaseHead
+			title={title}
+			description={description}
+			ogImage={image}
+			articleDate={articleDate}
+			keywords={keywords ?? []}
+		/>
+		<ProviderTheme />
+		<ProviderAnimations />
+	</head>
+	<body class='bg-white text-stone-950 dark:bg-[#0a0910] dark:text-white'>
+		<main
+			class='px-5 sm:mx-auto sm:max-w-2xl sm:px-8 lg:px-0 antialiased md:max-w-6xl grid gap-12 mt-4 overflow-hidden md:overflow-visible'
+		>
+			<Header />
+			<slot />
+			<Footer />
+		</main>
+		<style>
+			body {
+				margin-left: calc(100vw - 100%); /* prevent layout shift */
+			}
+		</style>
+		<script
+			async
+			type='application/javascript'
+			src='https://news.google.com/swg/js/v1/swg-basic.js'
+			is:inline></script>
+		<script is:inline>
+			// @ts-ignore
+			;(self.SWG_BASIC = self.SWG_BASIC || []).push((basicSubscriptions) => {
+				basicSubscriptions.init({
+					type: 'NewsArticle',
+					isPartOfType: ['Product'],
+					isPartOfProductId: 'CAow7Je2DA:openaccess',
+					clientOptions: { theme: 'light', lang: 'en' }
+				})
+			})
+		</script>
+		<script async src='https://www.googletagmanager.com/gtag/js?id=G-QQSGW40WTM' is:inline></script>
+		<script is:inline>
+			// @ts-ignore
+			window.dataLayer = window.dataLayer || []
+			function gtag() {
+				// @ts-ignore
+				dataLayer.push(arguments)
+			}
+			// @ts-ignore
+			gtag('js', new Date())
+			// @ts-ignore
+			gtag('config', 'G-QQSGW40WTM')
+		</script>
+	</body>
+</html>

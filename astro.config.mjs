@@ -1,11 +1,50 @@
-import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
+import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
+import tailwind from '@astrojs/tailwind';
+import { remarkReadingTime } from './src/utils/readTime.ts';
+import {viteStaticCopy} from 'vite-plugin-static-copy';
 
-import mdx from "@astrojs/mdx";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), mdx()],
+  site: 'https://muhabbat.dev',
+  markdown: {
+    remarkPlugins: [remarkReadingTime],
+    drafts: true,
+    shikiConfig: {
+      theme: 'material-theme-palenight',
+      wrap: true
+    }
+  },
+  vite: {
+    plugins: [
+      viteStaticCopy({
+        targets: [
+          {
+            src: 'src/assets/images/body/*',
+            dest: 'src/assets/images/body/'
+          },
+        ],
+      }),
+    ],
+  },
+  integrations: [mdx({
+    syntaxHighlight: 'shiki',
+    shikiConfig: {
+      experimentalThemes: {
+        light: 'vitesse-light',
+        dark: 'material-theme-palenight'
+      },
+      wrap: true
+    },
+    drafts: true
+  }), sitemap({
+    filter : (page) => 
+      !page.includes('https://coding-buddy.com/tags/')
+      &&
+      !page.includes('https://coding-buddy.com/category/')
+  }), tailwind()],
   experimental : {
     contentCollectionCache : true
   }

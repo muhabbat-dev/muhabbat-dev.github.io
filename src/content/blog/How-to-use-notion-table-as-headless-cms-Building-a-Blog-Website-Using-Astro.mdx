@@ -1,0 +1,299 @@
+---
+draft: false
+heroImage: /src/assets/images/2024/11/2024-11-20-astro-notion-blogs-cms.png
+title: 'How to use notion table as headless cms: Building a blog website using Astro'
+category: Web Development
+description: Notion CMS for blog website
+pubDate: 2024-11-19T19:00:00.000Z
+tags:
+  - advanced
+  - javascript
+keywords:
+  - Creating a blog website using notion database as a cms
+  - Using Notion as a headless CMS
+---
+
+## Overview
+
+Notion is a great tool for managing a lot of things. You can use the notion to organize your life easily. Do know you can also use notion as a CMS for your website? In this article, I will walk you through the step-by-step guide to creating a blog website using notion database as a headless CMS and Astro as a static site generator to fetch data from the notion database and create a basic static website to display your blogs.
+
+## Notion Setup
+
+### Enable API
+
+- Go to [https://www.notion.so/profile/integrations](https://www.notion.so/profile/integrations) to create your API token for the blog database. This token will be used by the notion client from the frontend to fetch the database.
+- Click on the New Integration button
+- Write an Integration name such as Astro Blog and Select your associated workspace where the blog database is created.
+- Select Internal Type and click Save.
+- After saving, Click on configure API.
+- We need to Enable read access for the API client to fetch the database. Read Content should be marked by default so that the data can be accessed. If the Read Content is not marked, enable it and click on Save.
+- Copy the Internal Integration token as it will be used by the notion client. The token will look like this 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
+
+### Create Blog Database
+
+Go to your notion dashboard and create a full-page database named blogs. After creating the database, Create a template for the database with the following properties: featured image, publish date, tags(multi-select), slug, author name, and draft(checkbox). These properties will be used as blog metadata. The blog body will be the content of the blog. The Notion Client on the website will fetch each page along with the properties and content as markdown. Click on page options > Connections > Connect to and select the API that you created in the earlier step. Also, copy the ID of the database. You can find the database ID in the URL of the notion page after opening the database on your browser. For this example, We have this URL [https://www.notion.so/dev-mohib/1447b31380d180779aa2c01386ca83cc](https://www.notion.so/dev-mohib/1447b31380d180779aa2c01386ca83cc) and the database ID would be 1447b31380d180779aa2c01386ca83cc. You also need to publish your database to the public so that we can read all pages in the database by notion client. You can quickly share the database by clicking Share > Publish and clicking the Publish button. The database should look like this
+
+![](/src/assets/images/body/2024/11/2024-11-20-notion-cms-body-1.png)
+
+## Setup Astro Project
+
+Create a new Astro project by running `yarn create astro notion-blog`. Make sure that node.js is installed in your environment. After creating a project, install the notion client library. Do this by running `yarn add @notionhq/client.`
+
+### Create Notion client API function
+
+Create a new file under `src/utils/notion_client.js` and add the following config function
+
+```javascript
+import { Client } from '@notionhq/client'
+import { parseBlocksToHTML } from './block_parser'
+const notion = new Client({ auth: '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' })
+const databaseId = '1447b31380d180779aa2c01386ca83cc'
+
+//get pages data from blog database
+export async function getBlogs() {
+	const response = await notion.databases.query({
+		database_id: databaseId
+	})
+
+	return response.results
+}
+
+//get page properties name, fearured image, tags
+export async function getPageProperties(page_id) {
+	const response = await notion.pages.retrieve({ page_id })
+
+	return response.properties
+}
+//retrieve notion blocks from page and parse into html
+export async function getNotionBlocksByPage(blockId) {
+	const response = await notion.blocks.children.list({
+		block_id: blockId,
+		page_size: 50
+	})
+	const html = parseBlocksToHTML(response.results)
+	return html
+}
+```
+
+### Parser functions
+
+We need some helper functions to handle the response from notion API. These functions are used to parse the JSON response and parse it into our required format such as HTML
+
+Create `src/utils/block_parser.js` and add the following function.
+
+```javascript
+function parseBlock(block) {
+	const { type } = block
+
+	switch (type) {
+		case 'paragraph':
+			return parseParagraph(block)
+		case 'heading_1':
+		case 'heading_2':
+		case 'heading_3':
+			return parseHeading(block, type)
+		case 'bulleted_list_item':
+			return `<li>${parseRichText(block.bulleted_list_item.rich_text)}</li>`
+		case 'numbered_list_item':
+			return `<li>${parseRichText(block.numbered_list_item.rich_text)}</li>`
+		case 'quote':
+			return `<blockquote>${parseRichText(block.quote.rich_text)}</blockquote>`
+		case 'code':
+			return `<pre><code>${block.code.text[0]?.rich_text?.content || ''}</code></pre>`
+		case 'image':
+			return parseImage(block)
+		case 'divider':
+			return '<hr />'
+		case 'callout':
+			return `<div class="callout">${parseRichText(block.callout.rich_text)}</div>`
+		default:
+			return ''
+	}
+}
+```
+
+This function accepts the block object obtained from the Notion page API response. Each block has a type such as h1,h3,h3, bulleted list, image, callout, etc. We will create a separate parser for each block type. Add the following functions bellow the `src/utils/block_parser.js`
+
+```javascript
+function parseParagraph(block) {
+	return `<p>${parseRichText(block.paragraph.rich_text)}</p>`
+}
+
+function parseHeading(block, type) {
+	const level = type === 'heading_1' ? 1 : type === 'heading_2' ? 2 : 3
+	return `<h${level}>${parseRichText(block[type].rich_text)}</h${level}>`
+}
+
+function parseImage(block) {
+	const imageUrl = block.image.type === 'external' ? block.image.external.url : block.image.file.url
+	const altText = block.image.caption?.[0]?.plain_text || ''
+	return `<img src="${imageUrl}" alt="${altText}" />`
+}
+
+function parseRichText(richTextArray) {
+	if (!richTextArray) {
+		return
+	}
+	return richTextArray
+		.map((text) => {
+			const content = text.text.content
+			const link = text.text.link ? `<a href="${text.text.link.url}">${content}</a>` : content
+
+			const formatted = applyAnnotations(link, text.annotations)
+			return formatted
+		})
+		.join('')
+}
+
+function applyAnnotations(content, annotations) {
+	if (annotations.bold) content = `<b>${content}</b>`
+	if (annotations.italic) content = `<i>${content}</i>`
+	if (annotations.underline) content = `<u>${content}</u>`
+	if (annotations.code) content = `<code>${content}</code>`
+	return content
+}
+```
+
+Finally, We will create a function to all the blocks by looping through each block and return all the blocks converted into HTML as a string. Add the following function to the above file
+
+```javascript
+export function parseBlocksToHTML(blocks) {
+	let html = ''
+	let listType = null
+	let listItems = []
+
+	for (const block of blocks) {
+		if (block.type === 'bulleted_list_item' || block.type === 'numbered_list_item') {
+			if (!listType) listType = block.type === 'bulleted_list_item' ? 'ul' : 'ol'
+			listItems.push(parseBlock(block))
+		} else {
+			if (listType) {
+				html += `<${listType}>${listItems.join('')}</${listType}>`
+				listType = null
+				listItems = []
+			}
+			html += parseBlock(block)
+		}
+	}
+
+	if (listType) {
+		html += `<${listType}>${listItems.join('')}</${listType}>`
+	}
+
+	return html
+}
+```
+
+### Property parser function
+
+We also need a property parser function to extract the values from page properties as Notion returns a long JSON response with different JSON formats for each property such as Featured Image, Name, Tags, and Checkboxes. Create `src/utils/property_parser.js` and add the following function
+
+```javascript
+export function parsePageProperties(properties) {
+	return {
+		featuredImage: parseFileProperty(properties.FeaturedImage),
+		name: parseNameProperty(properties.Name),
+		draft: parseCheckboxProperty(properties.Draft),
+		tags: parseMultiSelectProperty(properties.Tags)
+	}
+}
+
+function parseFileProperty(fileProperty) {
+	if (!fileProperty || !fileProperty.files || fileProperty.files.length === 0) return null
+
+	const file = fileProperty.files[0]
+	return file.type === 'external' ? file.external.url : file.file.url
+}
+
+function parseNameProperty(textProperty) {
+	if (!textProperty) return null
+	return textProperty.title[0].text.content
+}
+
+function parseCheckboxProperty(checkboxProperty) {
+	return checkboxProperty?.checkbox || false
+}
+
+function parseMultiSelectProperty(multiSelectProperty) {
+	if (!multiSelectProperty || !multiSelectProperty.multi_select) return []
+
+	return multiSelectProperty.multi_select.map((item) => item.name)
+}
+```
+
+## Blog Home page
+
+Now, let's create the homepage and display the blogs as a card view. Go to `src/pages/index.astro`. add the following code
+
+```html
+---
+import Layout from '../layouts/main.astro'
+import { getBlogs } from '../utils/notion_client'
+import { parsePageProperties } from '../utils/property_parser'
+const blogs = await getBlogs()
+---
+  <Layout>
+    <h1 class="text-2xl font-bold my-5">Astro Blogs</h1>
+    <div class="flex flex-wrap justify-start items-center">
+      {
+        blogs.map(blog => {
+          const { name, featuredImage, tags } = parsePageProperties(blog.properties)
+          return <div class="w-40 m-5 rounded-lg bg-gray-300 h-44">
+            <img src={featuredImage} class="h-20 bg-cover w-full" />
+            <a href={`/blog/${blog.id}`}>{name}</a>
+            <div class="self-end pt-2">
+              {
+                tags.map((tag: string) => <span class="bg-blue-400 p-1 rounded-lg m-1 text-sm">{tag}</span>)
+              }
+            </div>
+          </div>
+        })
+      }
+    </div>
+  </Layout>
+
+
+```
+
+This will show the card view of blogs with title, image, tags, and a link to read the blog.
+
+![](/src/assets/images/body/2024/11/2024-11-20-notion-cms-body-2.png)
+
+## Blog View page
+
+Finally, We will create a blog view page to render the blog body. This page will fetch the single blog page from Notion and return its metadata properties and page blocks to display in the view. You can create a dynamic page to pass the blog id as a parameter. Create `src/pages/blog/[blog_id].astro` Add the following code
+
+```html
+---
+import { getBlogs, getNotionBlocksByPage, getPageProperties } from '../../utils/notion_client'
+import { parsePageProperties } from '../../utils/property_parser'
+import Layout from '../../layouts/main.astro'
+export async function getStaticPaths() {
+  const blogs = await getBlogs();
+  const paramsData = blogs.map(blog => ({
+    params: {
+      blog_id: blog.id
+    }
+  }))
+  return paramsData;
+}
+const { blog_id } = Astro.params
+
+const blogBody = await getNotionBlocksByPage(blog_id)
+const pageProperties = await getPageProperties(blog_id)
+const { name, featuredImage } = parsePageProperties(pageProperties)
+
+---
+
+<Layout>
+	<img class="w-full h-80 image-cover" src="{featuredImage}" />
+	<h1 class="text-2xl font-bold text-center">{name}</h1>
+	<div class="prose prose-md mt-10" set:html="{blogBody}"></div>
+</Layout>
+```
+
+Here getStaticPaths generates a unique page for each blog according to the id of the page in the notion database. The final UI for the blog will look like this.
+
+![](/src/assets/images/body/2024/11/2024-11-20-notion-cms-body-3.png)
+
+This is a basic blog website that uses Notion as a headless CMS. You can create a fully featured blog website with Notion and Astro and add more complex features such as search blogs, organizing categories, pagination, and many other customizations. You can download the source code of this project here [https://github.com/dev-mohib/astro-notion-blog](https://github.com/dev-mohib/astro-notion-blog)

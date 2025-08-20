@@ -5,6 +5,8 @@ dist/
 
 # dependencies
 node_modules/
+.env
+
 
 # logs
 npm-debug.log*
@@ -19,11 +21,5 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
-
-# jetbrains setting folder
-.idea/
-
-# draft blog
-src/content/drafts/*
 
 node_modules

@@ -1,0 +1,28 @@
+<div class='text-black dark:text-black mx-auto px-6 sm:px-6 max-w-3xl pt-12 md:pt-4 pb-12 md:pb-20'>
+	<div id='disqus_thread'></div>
+	<script id='dsq-count-scr' src='//coding-buddy.disqus.com/count.js' is:inline></script>
+	<script is:inline data-astro-rerun>
+		var disqus_config = function () {
+			const canonicalUrl = new URL(Astro.url.pathname, Astro.site)
+
+			const { slug } = Astro.props
+			// @ts-ignore
+			this.page.url = canonicalUrl
+			// @ts-ignore
+			this.page.identifier = slug
+		}
+		;(function () {
+			// DON'T EDIT BELOW THIS LINE
+			var d = document,
+				s = d.createElement('script')
+			s.src = 'https://coding-buddy.disqus.com/embed.js'
+			s.setAttribute('data-timestamp', String(+new Date()))
+			;(d.head || d.body).appendChild(s)
+		})()
+	</script>
+	<noscript
+		>Please enable JavaScript to view the <a href='https://disqus.com/?ref_noscript'
+			>comments powered by Disqus.</a
+		></noscript
+	>
+</div>

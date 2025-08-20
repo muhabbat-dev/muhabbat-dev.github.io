@@ -1,34 +1,38 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection, z } from 'astro:content'
+import { CATEGORIES } from '@/data/categories'
 
-const postCollection = defineCollection({
-    type : "content",
-    schema : z.object({
-        layout: z.string(),
-        title : z.string(),
-        description : z.string(),
-        pubDate : z.date(),
-        image : z.string(),
-        body : z.string().optional(),
-        keywords: z.string(),
-        tags: z.array(z.string()),
-        category: z.string().default('All')
-    })
-});
+const blog = defineCollection({
+	// Type-check frontmatter using a schema
+	schema: ({ image }) =>
+		z.object({
+			draft: z.boolean().default(true),
+			heroImage: image(),
+			title: z.string().max(100),
+			category: z.enum(CATEGORIES),
+			description: z.string(),
+			pubDate: z
+				.string()
+				.or(z.date())
+				.transform((val) => new Date(val)),
+			tags: z.array(z.string()),
+			keywords: z.array(z.string())
+		})
+})
 
-const projectCollection = defineCollection({
-    type : "content",
-    schema : z.object({
-        title : z.string(),
-        description : z.string(),
-        pubDate : z.date(),
-        image : z.string(),
-        link: z.string().url().optional(),
-        category: z.string().default('Web')
-    })
-});
+const projects = defineCollection({
+	schema: ({ image }) =>
+		z.object({
+			title: z.string().max(100),
+			description: z.string(),
+			pubDate: z.date(),
+			image: z.string(),
+			link: z.string(),
+		})
+})
 
 
-export const collections = {
-    'posts': postCollection,
-    'projects': projectCollection
-};
+
+
+
+
+export const collections = { blog, projects }

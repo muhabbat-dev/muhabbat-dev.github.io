@@ -1,0 +1,449 @@
+---
+draft: false
+heroImage: /src/assets/images/2024/11/2024-11-15-flutter-bloc-body-cover.jpg
+title: >-
+  Flutter Bloc: A complete guide to handle state management with cart
+  functionality
+category: Mobile Development
+description: Implement Cart functionality in flutter using bloc pattern
+pubDate: 2024-11-14T19:00:00.000Z
+tags:
+  - flutter
+keywords:
+  - flutter shopping cart functionality
+  - todo app using flutter bloc pattern
+  - flutter bloc state management
+---
+
+## Overview
+
+Flutter Bloc is a well-architectured way to manage global state management in applications. Bloc makes it easy to separate the business logic that makes your code easy to test and reuse. In this post, I will write a step-by-step guide to implementing Flutter Bloc to build a cart functionality in the Flutter app. I will implement a basic cart feature where users can add products to the cart.
+
+## Create Flutter App
+
+First, Let's initialize the project by running flutter create mystore. Make sure that you have already installed flutter sdk in your environment. Now, add install bloc and flutter libraries in the project by running flutter pub add bloc flutter_bloc. We also need some mock products and the product model class. Create a new file at `main/models/product_model.dart` and add the following code.
+
+### Create Product Model
+
+```dart
+class ProductModel {
+  final String id;
+  final String name;
+  final int price;
+  final String image;
+
+  ProductModel({ required this.id, required this.name, required this.price, required this.image });
+
+  ProductModel copyWith({
+    String? id,
+    String? name,
+    int? price,
+    String? image,
+  }) {
+  return ProductModel(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    price: price ?? this.price,
+    image: image ?? this.image
+  );
+}
+}
+```
+
+### Product Repository
+
+main/repository/product_repository.dart
+
+```dart
+import 'dart:async';
+import 'package:mystore/models/product_model.dart';
+
+List < ProductModel > _products =[
+  ProductModel(id: '1', name: 't-shirt', price: 100, image: 't-shirt.jpg'),
+  ProductModel(id: '2', name: 'Bag', price: 150, image: 'bag.jpg'),
+  ProductModel(id: '3', name: 'Glasses', price: 20, image: 'glasses.jpg'),
+  ProductModel(id: '4', name: 'Jeans', price: 150, image: 'jeans.jpg'),
+  ProductModel(id: '5', name: 'Shoes', price: 160, image: 'shoe.jpg'),
+  ProductModel(id: '6', name: 'White Cap', price: 85, image: 'cap.jpg'),
+];
+class ProductRepository {
+  Future<List<ProductModel>> getProducts() async{
+    //fake loading
+    final products  = await Future.delayed(const Duration(seconds: 1)).then((value) => _products);
+    return products;
+  }
+}
+```
+
+## Implementing Bloc
+
+Now, Let's define two cubits, products and cart to manage the state of both units separately. Blocs library uses blocs or cubits to define and manage the state of a unit. I'm using cubits instead of blocs because it's easy and simple. You can even use cubits to handle complex states.
+
+### Product Cubit
+
+Create `main/state/product_cubit.dart`. We'll define two classes in this file. ProductState class and ProductStateCubit class. ProductState class contains the state of products along with the data members to hold the properties while ProductStateCubit is used to interact with the repository and emit the changes to the state.
+
+```dart
+import 'package:bloc/bloc.dart';
+import 'package:mystore/models/product_model.dart';
+import 'package:mystore/repository/product_repository.dart';
+
+enum AppStatus{initial, loading, loaded, error}
+
+class ProductState {
+  final AppStatus status;
+  final List<ProductModel> products;
+  final String? error;
+
+  ProductState({
+    required this.status,
+    required this.products,
+    required this.error
+  });
+
+  ProductState copyWith({
+    AppStatus? status,
+    List<ProductModel>? products,
+    String? error
+  }) => ProductState(
+    status: status ?? this.status,
+    products: products ?? this.products,
+    error: error ?? this.error
+  );
+}
+
+class ProductStateCubit extends Cubit<ProductState> {
+  final ProductRepository productRepository;
+  ProductStateCubit({required this.productRepository}) : super(ProductState(status: AppStatus.initial, products: [], error: null));
+
+  Future<void> loadProducts() async {
+    try {
+      final products = await productRepository.getProducts();
+      emit(state.copyWith(status: AppStatus.loaded, products: products));
+    } catch (e) {
+      emit(state.copyWith(status: AppStatus.error, error: e.toString()));
+    }
+  }
+}
+```
+
+### Cart Cubit
+
+The cart cubit will be responsible for managing the state of the cart page. Create `main/state/cart_cubit.dart`. The cart cubit also contains two classes CartState and CartStateCubit. In CartState class, You can also add member functions for some extra functionalities, However, The member functions in this class will not update the state change until the emit function is not called after using the functions. Such as addProductToCart and removeProductFromCart will update the array of the state in memory but the UI will not be notified until a new state is not emitted from the CartStateCubit class.
+
+```dart
+import 'package:bloc/bloc.dart';
+import 'package:mystore/models/product_model.dart';
+
+class CartState {
+  final List<ProductModel> products;
+
+  CartState({ required this.products });
+
+  void addProductToCart(ProductModel product){
+    products.add(product);
+  }
+  void removeProductFromCart(ProductModel product){
+    products.remove(product);
+  }
+
+  bool isProductInCart(ProductModel product){
+    return products.contains(product);
+  }
+
+  int totlaPrice(){
+    return products.fold(0, (previousValue, element) => previousValue + element.price);
+  }
+}
+
+class CartStateCubit extends Cubit<CartState>{
+  CartStateCubit(): super(CartState(products: []));
+
+  void addProductToCart(ProductModel product){
+    state.addProductToCart(product);
+    // the ui will not rerender until the new state is not emitted,
+    emit(state);
+  }
+
+  void removeProductFromCart(ProductModel product){
+    state.removeProductFromCart(product);
+    emit(state);
+  }
+}
+```
+
+## UI Design
+
+Let's create the UI for the product view and cart view screen. We will also use bottom navigation to navigate between screens. Create `main/product_view.dart` and `main/cart_view.dart`
+
+### Bottom Navigation
+
+Go to `main.dart` and update MyHomePage widget with the following code.
+
+```dart
+...
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({ super.key });
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final List<Widget> _pages = [ProductView(), CartView()];
+  int _selectedTab = 0;
+
+  void _changeTab(int index) {
+  setState(() {
+    _selectedTab = index;
+  });
+}
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('My Store'),
+    ),
+    bottomNavigationBar: BottomNavigationBar(
+      currentIndex: _selectedTab,
+      onTap: (index) => _changeTab(index),
+      selectedItemColor: Colors.red,
+      unselectedItemColor: Colors.grey,
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: "Cart"),
+        ],
+      ),
+    body: _pages[_selectedTab],
+  );
+}
+}
+
+```
+
+The UI will look like this
+
+![](/src/assets/images/body/2024/11/2024-11-14-flutter-bloc-body-1.jpg)
+
+### Product View
+
+Create a stateful widget with the name ProductView and Add
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mystore/models/product_model.dart';
+import 'package:mystore/state/cart_cubit.dart';
+import 'package:mystore/state/product_cubit.dart';
+
+class ProductView extends StatefulWidget {
+  const ProductView({super.key});
+
+  @override
+  State<ProductView> createState() => _ProductViewState();
+}
+
+class _ProductViewState extends State<ProductView> {
+  @override
+  void initState() {
+    // load products
+    BlocProvider.of<ProductStateCubit>(context).loadProducts();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Products'),
+      ),
+      body: BlocBuilder<ProductStateCubit, ProductState>(
+        builder: (context, state) {
+          if (state.status == AppStatus.loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 3 / 4,
+              ),
+              itemCount: state.products.length,
+              itemBuilder: (context, index) {
+                return ProductCard(
+                  product: state.products[index],
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ProductCard extends StatelessWidget {
+  final ProductModel product;
+
+  const ProductCard({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Image.asset(
+                product.image,
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              product.name,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 5),
+            Text(
+              '\$${product.price}',
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.green,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: BlocBuilder<CartStateCubit, CartState>(
+                builder: (context, state) {
+                  return IconButton(
+                    onPressed: () {
+                      if (state.isProductInCart(product)) {
+                        state.removeProductFromCart(product);
+                      } else {
+                        state.addProductToCart(product);
+                      }
+                    },
+                    icon: state.isProductInCart(product) ? Icon(Icons.remove_shopping_cart, color: Colors.red) : Icon(Icons.add_shopping_cart, color: Colors.blue),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+Here BlocBuider is used to listen to the state from the product cubit. You can learn more about bloc builder [here](https://bloclibrary.dev/flutter-bloc-concepts/#blocbuilder). We have also used BlocProvider.of(context) to get the reference of product cubit. Learn more about the BlocProvider [here](https://bloclibrary.dev/flutter-bloc-concepts/#blocprovider)
+
+The final UI will look like this
+
+![](/src/assets/images/body/2024/11/2024-11-15-flutter-bloc-body-2.jpg)
+
+### Cart View
+
+Add the following code to `main/cart_view.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mystore/state/cart_cubit.dart';
+
+class CartView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cart'),
+      ),
+    body: Padding(
+      padding: const EdgeInsets.all(16.0),
+        child: BlocBuilder < CartStateCubit, CartState > (
+          builder: (context, state) {
+            return Column(
+              children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: state.products.length,
+                  itemBuilder: (context, index) {
+                      final item = state.products[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                child: ListTile(
+                  title: Text(item.name),
+                  subtitle: Text(
+                    'Price: \$${item.price} x 1',
+                  ),
+                  trailing: Text(
+                    '\$${(item.price * 1).toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                          ),
+                        ),
+                      );
+          },
+                  ),
+                ),
+    const Divider(thickness: 2),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+                      const Text(
+      'Total:',
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+                      ),
+    Text(
+      '\$${state.totlaPrice()}',
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.green,
+      ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+  },
+        ),
+      ),
+    );
+}
+}
+
+```
+
+The UI output will look like this
+
+![](/src/assets/images/body/2024/11/2024-11-15-flutter-bloc-body-3.jpg)
+
+You have learned the use of bloc cubits in the flutter. You can get the source code of this project [here](https://github.com/dev-mohib/flutter-bloc-cart)
