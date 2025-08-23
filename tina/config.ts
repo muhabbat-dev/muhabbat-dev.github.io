@@ -167,6 +167,12 @@ export default defineConfig({
             label: "Link",
             required: true,
           },
+           {
+            type: "string",
+            name: "description",
+            label: "Description",
+            required: true,
+          },
           {
 						type: 'string',
 						name: 'tags',
