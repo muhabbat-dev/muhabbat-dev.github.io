@@ -28,6 +28,14 @@
 	}
 }
 
+html, body {
+  overflow-x: hidden !important;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+}
 .glass {
 	background: rgba(57, 56, 56, 0.52);
 	backdrop-filter: blur(13px) saturate(150%);
