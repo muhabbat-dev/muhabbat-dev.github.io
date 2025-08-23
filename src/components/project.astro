@@ -1,10 +1,10 @@
 ---
+import ArrowUp from "./icons/ArrowUp.astro";
+
 const { name, description, url, image, pubDate } = Astro.props;
 ---
 
-<a
-  href={url}
-  target="_blank"
+<div
   class="relative flex flex-col items-stretch duration-300 ease-out p-7 sm:p-3 group h-100 rounded-2xl"
 >
   <span
@@ -64,4 +64,17 @@ const { name, description, url, image, pubDate } = Astro.props;
       <span class="text-sm text-neutral-600 dark:text-neutral-400">Completed on  {pubDate}</span>
     </span>
   </span>
-</a>
+
+  <footer class='flex justify-between items-center'>
+			<a
+				href={url}
+				class='flex justify-center items-center text-secondary dark:text-primary rounded-full hover:translate-x-1 transition-transform duration-150 ease-in-out font-semibold gap-1 group'
+				aria-label={`Open ${name}`}
+			>
+				Read More <span
+					class='mt-[1px] group-hover:rotate-45 transition-transform duration-250 ease-in-out'
+					><ArrowUp width='18' height='18' /></span
+				>
+			</a>
+		</footer>
+</div>

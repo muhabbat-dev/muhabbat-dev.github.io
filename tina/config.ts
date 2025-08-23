@@ -113,23 +113,88 @@ export default defineConfig({
 					}
 				]
 			},
+      {
+        name: "services",
+        label: "Services",
+        path: "src/content/services",
+        format: 'mdx',
+        fields: [
+          {
+            type: "string",
+            name: "title",
+            label: "Title",
+            isTitle: true,
+            required: true,
+          },
+          {
+						type: 'string',
+						name: 'category',
+						label: 'Category',
+						description: 'Select an category for this post',
+						options: [...CATEGORIES]
+					},
+          {
+						type: 'image',
+						label: 'Thumbnail Image',
+						required: true,
+						name: 'thumbnail',
+						description: 'The image used for the cover of the post',
+					},
+         
+          {
+						type: 'rich-text',
+						label: 'Body',
+						name: 'SButton',
+						isBody: true,
+						templates: [
+							{
+								label: 'SButton',
+								name: 'SButton',
+								fields: [
+									{
+										type: 'rich-text',
+										label: 'SButton',
+										name: 'children',
+										isBody: true
+									}
+								]
+							}
+						]
+					},
+          {
+            type: "string",
+            name: "link",
+            label: "Link",
+            required: true,
+          },
+          {
+						type: 'string',
+						name: 'tags',
+						required: true,
+						label: 'Tags',
+						description: 'Tags for this post',
+						list: true,
+						ui: {
+							component: 'tags'
+						}
+					},
+        ],
+      },
 			{
         name: "project",
         label: "Projects",
-        path: "content/projects",
+        path: "src/content/projects",
         fields: [
           {
-						type: 'image',
-						label: 'Cover Image',
-						required: true,
-						name: 'heroImage',
-						description: 'The image used for the cover of the post',
-					},
+            type: "image",
+            name: "featuredImage",
+            description: "Add Feature Image",
+          },
           {
             type: "image",
             list: true,
-            name: "Images",
-            description: "add all other images",
+            name: "slideImages",
+            description: "Add up to 7 slide images",
           },
           {
             type: "string",
@@ -205,20 +270,6 @@ export default defineConfig({
             label: "Body",
             isBody: true,
           },
-        ],
-      },
-      {
-        name: "services",
-        label: "Services",
-        path: "content/services",
-        fields: [
-          {
-            type: "string",
-            name: "title",
-            label: "Title",
-            isTitle: true,
-            required: true,
-          }
         ],
       },
       {

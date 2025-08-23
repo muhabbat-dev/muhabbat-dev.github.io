@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import ServiceCard from '@/components/ServiceCard'
+import { cn } from '@/utils'
+
+type Props = {
+	services: CollectionEntry<'services'>[]
+}
+
+const { services } = Astro.props
+---
+
+<section
+	class={cn(
+		`grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2  gap-8 mt-3`
+	)}
+>
+	{
+		services.map(async (service) => {
+			return (
+				<ServiceCard
+					id={service.id}
+					data={service.data}
+					slug={`projects/${service.slug}`}
+				/>
+			)
+		})
+	}
+</section>

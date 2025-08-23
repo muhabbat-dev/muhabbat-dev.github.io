@@ -25,8 +25,22 @@ const projects = defineCollection({
 			title: z.string().max(100),
 			description: z.string(),
 			pubDate: z.date(),
-			image: z.string(),
+			featuredImage: image(),
+			slideImages: z.array(image()).max(7).optional(),
 			link: z.string(),
+		})
+})
+
+
+const services = defineCollection({
+	schema: ({ image }) =>
+		z.object({
+			title: z.string().max(100),
+			description: z.string(),
+			category: z.string(),
+			thumbnail: image(),
+			link: z.string(),
+			tags: z.array(z.string())
 		})
 })
 
@@ -34,5 +48,4 @@ const projects = defineCollection({
 
 
 
-
-export const collections = { blog, projects }
+export const collections = { blog, projects, services }

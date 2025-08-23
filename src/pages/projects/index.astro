@@ -1,0 +1,72 @@
+---
+import TitlePage from '@/components/TitlePage'
+import MainLayout from '@/layouts/main'
+import { getCollection } from 'astro:content'
+import ServiceCard from '@/components/ServiceCard';
+
+const allProjects = (await getCollection('projects')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+---
+
+<MainLayout title='Services' title='Services' meta={[
+  {name: 'description', content: "Services offered by Muhabbat Ali, a Full Stack Developer specializing in Mobile and Web development using modern frameworks."},
+  {name: 'keywords', content : 'full-stack developer services, web development services, mobile app development services, react js development services, node js development services, flutter development services, laravel development services, devops services, mern stack development services, javascript development services, front-end development services, back-end development services, android app development services, ios app development services, cross-platform app development services'}]}
+  ogMeta={[
+  {property : 'og:title', content: 'Services | Muhabbat Dev'},
+  {property : 'og:description', content: "Services offered by Muhabbat Ali, a Full Stack Developer specializing in Mobile and Web development using modern frameworks."},
+  {property : 'og:type', content: 'website'},
+  {property : 'og:image', content: 'https://muhabbat-dev.github.io/public/assets/images/profile5.png'},
+  {property : 'og:url', content: 'https://muhabbat.dev/services'}
+]}
+  >
+  
+  <div class="px-5 sm:mx-auto sm:max-w-2xl sm:px-8 lg:px-0 antialiased md:max-w-6xl grid gap-12 mt-4 overflow-hidden md:overflow-visible">
+        <TitlePage title='Projects' />
+		<h2 class='text-lg font-medium tracking-wide'>I have completed these projects so far</h2>
+		<div
+      class="grid items-stretch w-full grid-cols-1 my-8 gap-7 sm:gap-5 sm:grid-cols-2"
+    >
+      {
+        allProjects.map((project) => {
+          return (
+            <ServiceCard
+              data={{
+                title: project.data.title,
+                description: project.data.description,
+                thumbnail: project.data.featuredImage,
+                link: project.data.link,
+                category: project.data.pubDate.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+              })
+              }}
+              slug={`projects/${project.slug}`}
+              id={project.id}
+              
+            />
+          )
+        })
+      }
+    </div>
+	</div>
+</MainLayout>
+
+<script>
+	import { animate } from 'motion'
+	const showAnimations = localStorage.getItem('animations') === 'true'
+
+	if (showAnimations) {
+		animate(
+			'.title',
+			{ y: [80, 0], opacity: [0, 1] },
+			{
+				duration: 2.5,
+				opacity: { duration: 3 },
+				offset: [0, 0.55, 0.75]
+			}
+		)
+	}
+</script>

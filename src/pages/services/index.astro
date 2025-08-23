@@ -1,0 +1,62 @@
+---
+import ServiceCard from '@/components/ServiceCard';
+import TitlePage from '@/components/TitlePage'
+import MainLayout from '@/layouts/main'
+import { getCollection } from 'astro:content'
+import { cn } from '@/utils'
+
+const services = await getCollection('services');
+---
+
+<MainLayout title='Services' title='Services' meta={[
+  {name: 'description', content: "Services offered by Muhabbat Ali, a Full Stack Developer specializing in Mobile and Web development using modern frameworks."},
+  {name: 'keywords', content : 'full-stack developer services, web development services, mobile app development services, react js development services, node js development services, flutter development services, laravel development services, devops services, mern stack development services, javascript development services, front-end development services, back-end development services, android app development services, ios app development services, cross-platform app development services'}]}
+  ogMeta={[
+  {property : 'og:title', content: 'Services | Muhabbat Dev'},
+  {property : 'og:description', content: "Services offered by Muhabbat Ali, a Full Stack Developer specializing in Mobile and Web development using modern frameworks."},
+  {property : 'og:type', content: 'website'},
+  {property : 'og:image', content: 'https://muhabbat-dev.github.io/public/assets/images/profile5.png'},
+  {property : 'og:url', content: 'https://muhabbat.dev/services'}
+]}
+  >
+  
+  <div class="px-5 sm:mx-auto sm:max-w-2xl sm:px-8 lg:px-0 antialiased md:max-w-6xl grid gap-12 mt-4 overflow-hidden md:overflow-visible">
+        <TitlePage title='Services' />
+		<h2 class='text-lg font-medium tracking-wide'>I offer these services on Fiverr</h2>
+		<section
+	class={cn(
+		`grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2  gap-8 mt-3`
+	)}
+>
+	{
+		services.map(async (service) => {
+			return (
+				<ServiceCard
+					id={service.id}
+					data={service.data}
+					slug={`services/${service.slug}`}
+				/>
+			)
+		})
+	}
+</section>
+
+	</div>
+</MainLayout>
+
+<script>
+	import { animate } from 'motion'
+	const showAnimations = localStorage.getItem('animations') === 'true'
+
+	if (showAnimations) {
+		animate(
+			'.title',
+			{ y: [80, 0], opacity: [0, 1] },
+			{
+				duration: 2.5,
+				opacity: { duration: 3 },
+				offset: [0, 0.55, 0.75]
+			}
+		)
+	}
+</script>

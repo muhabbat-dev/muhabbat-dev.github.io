@@ -1,0 +1,32 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content'
+import ServiceLayout from '@/layouts/ServiceLayout'
+
+
+export async function getStaticPaths() {
+	const services = await getCollection('services')
+	
+	return services.map((service) => ({
+		params: { slug: service.slug },
+		props: service
+	}))
+}
+type Props = CollectionEntry<'services'> & {
+	Content: any
+}
+const service = Astro.props
+
+const { Content } = await service.render()
+
+---
+
+<ServiceLayout
+	id={`${service.id}`}
+	data={service.data}
+>
+	<article class='max-w-full w-full'>
+		<div class='prose prose-sm md:prose-lg prose-code:text-xs dark:prose-invert mb-12 min-w-full'>
+			<Content  />
+		</div>
+	</article>
+</ServiceLayout>
