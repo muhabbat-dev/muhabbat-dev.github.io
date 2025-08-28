@@ -1,6 +1,8 @@
 ---
 import Footer from "@/components/Footer";
 import Header from "@/components/HeaderX";
+import GoogleTagHead from "@/components/GoogleTagHead";
+import GoogleTagBody from "@/components/GoogleTagBody";
 import ProviderTheme from "@/components/ProviderTheme";
 import SquareLines from "@/components/square-lines";
 import "@/styles/global.css";
@@ -41,6 +43,7 @@ const card = headCard
 <!doctype html>
 <html lang="en" prefix="og: https://ogp.me/ns#">
   <head>
+    <GoogleTagHead />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
@@ -87,6 +90,7 @@ const card = headCard
     <ProviderTheme />
   </head>
   <body class="antialiased bg-white dark:bg-neutral-950">
+    <GoogleTagBody />
     <SquareLines />
     <Header />
     <slot />
