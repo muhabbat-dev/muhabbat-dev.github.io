@@ -39,13 +39,16 @@ export default defineConfig({
       wrap: true
     },
     drafts: true
-  }), sitemap({
-    filter : (page) => 
-      !page.includes('https://coding-buddy.com/tags/')
-      &&
-      !page.includes('https://coding-buddy.com/category/')
-  }), tailwind()],
+  }), sitemap(), tailwind()],
   experimental : {
     contentCollectionCache : true
   }
 });
+
+
+// {
+//     filter : (page) => 
+//       !page.includes('https://muhabbat.dev/blog/tags/')
+//       &&
+//       !page.includes('https://muhabbat.dev/blog/category/')
+//   }
