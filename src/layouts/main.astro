@@ -3,8 +3,39 @@ import Footer from "@/components/Footer";
 import Header from "@/components/HeaderX";
 import ProviderTheme from "@/components/ProviderTheme";
 import SquareLines from "@/components/square-lines";
-import "@/styles/global.css"
-const { title, meta, ogMeta } = Astro.props;
+import "@/styles/global.css";
+import type { HeadCard } from "@/utils/types";
+type Props = {
+  title: string;
+  meta: { name: string; content: string }[];
+  ogMeta?: { property: string; content: string }[];
+  headCard?: HeadCard;
+};
+const { title, meta, ogMeta, headCard } = Astro.props;
+const card = headCard
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: headCard?.headline,
+      image: headCard.image,
+      author: {
+        "@type": "Person",
+        name: "Muhabbat Ali",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Muhabbat.dev",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://muhabbat.dev/assets/images/profile5.png",
+        },
+      },
+      datePublished: headCard.publisher.datePublished,
+      dateModified: headCard.publisher.datePublished,
+      description: headCard.publisher.description,
+      url: headCard.publisher.url,
+    }
+  : {};
 ---
 
 <!doctype html>
@@ -13,8 +44,12 @@ const { title, meta, ogMeta } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    {meta.map((m : any) => <meta name={m.name} content={m.content} />)}
-    {ogMeta?.map((m : any) => <meta property={m.property} content={m.content} />)??null}
+    {meta.map((m: any) => <meta name={m.name} content={m.content} />)}
+    {
+      ogMeta?.map((m: any) => (
+        <meta property={m.property} content={m.content} />
+      )) ?? null
+    }
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -22,9 +57,26 @@ const { title, meta, ogMeta } = Astro.props;
       href={`${Astro.url.origin}/rss.xml`}
     />
     <!-- Calendly badge widget begin -->
-<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
-<script type="text/javascript">window.onload = function() { Calendly.initBadgeWidget({ url: 'https://calendly.com/muhabbat-ali/free-consultation', text: 'Free Consultation', color: '#0069ff', textColor: '#ffffff' }); }</script>
+    <link
+      href="https://assets.calendly.com/assets/external/widget.css"
+      rel="stylesheet"
+    />
+    <script
+      src="https://assets.calendly.com/assets/external/widget.js"
+      type="text/javascript"
+      async></script>
+    <script type="text/javascript">
+      window.onload = function () {
+        Calendly.initBadgeWidget({
+          url: "https://calendly.com/muhabbat-ali/free-consultation",
+          text: "Free Consultation",
+          color: "#0069ff",
+          textColor: "#ffffff",
+        });
+      };
+    </script>
+    <!-- prettier-ignore -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(card)}></script>
     <style>
       .prose img {
         border-radius: 20px;

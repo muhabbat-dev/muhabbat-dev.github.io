@@ -1,0 +1,32 @@
+---
+import type { HeadCard } from "@/utils/types";
+type Props = {
+  headCard: HeadCard;
+};
+const { headCard } = Astro.props;
+---
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": ``,
+    "image": "FULL_IMAGE_URL",
+    "author": {
+      "@type": "Person",
+      "name": "Muhabbat Ali"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Muhabbat.dev",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "FULL_LOGO_URL"
+      }
+    },
+    "datePublished": "2025-08-26T12:00:00+02:00",
+    "dateModified": "2025-08-26T12:00:00+02:00",
+    "description": "SHORT DESCRIPTION OF THE POST",
+    "url": "FULL_POST_URL"
+  }
+</script>
