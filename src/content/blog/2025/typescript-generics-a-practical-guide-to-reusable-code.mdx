@@ -1,0 +1,160 @@
+---
+draft: false
+title: TypeScript Generics A Practical Guide to Reusable Code
+slug: typescript-generics-a-practical-guide-to-reusable-code
+heroImage: /src/assets/images/blog/2025/typescript-generics-a-practical-guide-to-reusable-code.png
+category: 'Web Development'
+description: Stop writing duplicate functions for different types. Learn how TypeScript generics help you write flexible, reusable, and type-safe code with practical, easy-to-follow examples.
+pubDate:  2025-09-01T21:48:27.048Z
+keywords:
+- typescript generics
+- generics in typescript
+- reusable code
+- type safety
+- typescript tutorial
+tags:
+- typescript
+- web development
+- programming
+
+---
+
+# TypeScript Generics A Practical Guide to Reusable Code
+
+As a developer, you've probably faced this problem: you write a perfectly good function that works with numbers, but then you need the exact same logic for strings. Or arrays. So what do you do? You could copy and paste the function and change the types, but that leads to duplicate code. Or you could use the `any` type, but that throws away all the type safety that makes TypeScript great.
+
+There’s a much better way. It’s called **generics**.
+
+Generics are a core feature of TypeScript that lets you write functions, classes, and interfaces that are flexible and reusable, all without sacrificing type safety. This guide explains what generics are, why they are so useful, and how you can start using them with practical examples.
+
+## Why Are Generics So Useful?
+
+Before diving into the code, it’s important to understand *why* generics are worth learning. They offer three huge benefits.
+
+### 1. Write Reusable Code
+The most immediate benefit is code reuse. Instead of writing a separate function for every data type, you can write one generic function that works for all of them. This means less code to write, less code to test, and less code to maintain.
+
+### 2. Enforce Type Safety
+Generics provide the flexibility of the `any` type without the risk. When you use `any`, you tell the TypeScript compiler to look the other way. With generics, you create a variable for types, so the compiler knows exactly what type you're working with at any given moment. This means you still get excellent autocompletion and error checking.
+
+### 3. Create Flexible Components
+Generics allow you to build components that can adapt to different data types. This is incredibly powerful for creating libraries, data structures, or utility functions that need to work in a variety of situations.
+
+## How Generics Work A Simple Example
+
+The best way to understand generics is to see them in action. Let’s create a simple function called `getFirstElement` that takes an array and returns its first element.
+
+Without generics, we might be forced to write multiple versions:
+
+```typescript
+function getFirstString(arr: string[]): string {
+  return arr[0];
+}
+
+function getFirstNumber(arr: number[]): number {
+  return arr[0];
+}
+```
+
+This is repetitive. Let's make it generic. We'll use a **type variable**, commonly named `T`, as a placeholder for the type.
+
+```typescript
+function getFirstElement<T>(arr: T[]): T {
+  return arr[0];
+}
+```
+
+Let's break that down:
+- `<T>` right after the function name declares `T` as our generic type variable.
+- `arr: T[]` means the function accepts an array where all elements are of type `T`.
+- `: T` at the end means the function will return a value of type `T`.
+
+Now we have one function that works for any type, and it’s completely type-safe.
+
+```typescript
+const numbers = [1, 2, 3];
+const firstNumber = getFirstElement(numbers); // Type is inferred as number
+
+const strings = ["a", "b", "c"];
+const firstString = getFirstElement(strings); // Type is inferred as string
+```
+
+TypeScript is smart enough to infer the type of `T` based on the argument we pass. We can also be explicit if we want to:
+
+```typescript
+const firstStringExplicit = getFirstElement<string>(["a", "b", "c"]);
+```
+
+## Useful Examples of Generics
+
+Generics aren’t just for simple functions. They are incredibly useful for defining more complex structures like interfaces and classes.
+
+### Example 1 Generic Interfaces for API Responses
+
+When working with APIs, the shape of the response is often consistent, but the data inside changes. A generic interface is perfect for this.
+
+```typescript
+interface APIResponse<T> {
+  success: boolean;
+  data: T;
+  error?: string;
+}
+
+interface User {
+  id: number;
+  name: string;
+}
+
+interface Product {
+  id: string;
+  price: number;
+}
+
+const userResponse: APIResponse<User> = {
+  success: true,
+  data: { id: 1, name: "John Doe" },
+};
+
+const productResponse: APIResponse<Product> = {
+  success: true,
+  data: { id: "abc-123", price: 99.99 },
+};
+```
+
+Here, `APIResponse<T>` can be reused for any type of data payload, keeping our code consistent and type-safe.
+
+### Example 2 Generic Classes for Data Structures
+
+Generics are also great for creating data structures that can hold any type of data. Let's build a simple `Stack` class.
+
+```typescript
+class Stack<T> {
+  private items: T[] = [];
+
+  push(element: T): void {
+    this.items.push(element);
+  }
+
+  pop(): T | undefined {
+    return this.items.pop();
+  }
+}
+
+const numberStack = new Stack<number>();
+numberStack.push(10);
+numberStack.push(20);
+console.log(numberStack.pop()); // 20
+
+const stringStack = new Stack<string>();
+stringStack.push("hello");
+stringStack.push("world");
+console.log(stringStack.pop()); // "world"
+```
+
+This `Stack` class works seamlessly with numbers, strings, or any other type we want.
+
+## Conclusion
+
+Generics are a fundamental tool in TypeScript for writing clean, reusable, and robust code. By allowing you to create components that work over a variety of types without sacrificing type safety, they help you build more powerful and maintainable applications.
+
+If you’re not already using generics, start looking for opportunities in your code. The next time you find yourself writing duplicate logic for different types, it's the perfect time to write a generic instead.
