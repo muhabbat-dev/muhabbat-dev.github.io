@@ -49,9 +49,9 @@ const { Content, headings, remarkPluginFrontmatter } = await post.render();
   slug={post.slug}
 >
   <!-- post -->
-  <article class="max-w-full w-full">
+  <article class="max-w-full w-full flex flex-col items-center">
     <div
-      class="prose prose-sm md:prose-lg prose-code:text-xs dark:prose-invert mb-12 min-w-full md:px-56"
+      class="prose prose-sm md:prose-lg prose-code:text-xs dark:prose-invert mb-12 md:px-56 px-5 max-w-[100vw] sm:text-start"
     >
       <Content components={{ pre: Code, SButton }} />
     </div>
@@ -62,10 +62,6 @@ const { Content, headings, remarkPluginFrontmatter } = await post.render();
 			<p class='mb-5'></p> -->
 
     <!-- related posts -->
-    <div>
-      <h2 class="font-bold text-lg dark:text-white mb-6">Related Posts</h2>
-      <ListRelatedPosts posts={relatedPosts} />
-    </div>
   </article>
 
   <Disqus slug={post.slug} />

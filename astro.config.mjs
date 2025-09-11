@@ -39,7 +39,12 @@ export default defineConfig({
       wrap: true
     },
     drafts: true
-  }), sitemap(), tailwind()],
+  }), sitemap({
+    filter : (page) => 
+      !page.includes('https://muhabbat.dev/blog/tags/')
+      &&
+      !page.includes('https://muhabbat.dev/blog/category/')
+  }), tailwind()],
   experimental : {
     contentCollectionCache : true
   }
