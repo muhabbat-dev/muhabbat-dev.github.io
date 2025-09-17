@@ -1,0 +1,292 @@
+---
+draft: false
+title: Build a Real Time Chat App with Flutter and Supabase
+slug: build-a-real-time-chat-app-with-flutter-and-supabase
+heroImage: /src/assets/images/blog/2025/build-a-real-time-chat-app-with-flutter-and-supabase.png
+category: Mobile Development
+description: Learn how to build a fully functional, real-time chat application from scratch using Flutter for the UI and Supabase for the backend. This step-by-step guide covers authentication, real-time messaging, and database setup.
+pubDate:  2025-09-17T21:17:18.875Z
+keywords:
+  - flutter chat app
+  - supabase real time
+  - build chat application
+  - flutter supabase tutorial
+  - flutter tutorial
+  - supabase database
+tags:
+  - flutter
+  - supabase
+---
+
+# Build a Real Time Chat App with Flutter and Supabase
+
+Real-time chat is a core feature in many modern applications, from social media to customer support. Building one from scratch can seem complex, but with the right tools, it’s more accessible than you think. In this tutorial, we’ll build a complete chat application using Flutter for the cross-platform frontend and Supabase for a powerful, scalable backend.
+
+We will walk through setting up your project, creating the user interface, and implementing real-time messaging with Supabase’s powerful PostgreSQL database and Realtime API, with detailed code explanations along the way.
+
+## Why Flutter and Supabase?
+
+Before we dive in, let’s quickly talk about this tech stack. **Flutter** allows us to build beautiful, natively compiled applications for mobile, web, and desktop from a single codebase. **Supabase** is an open-source Firebase alternative that provides a suite of backend tools, including a database, authentication, and real-time subscriptions, making it incredibly easy to get started.
+
+Together, they create a powerful combination for building a feature-rich chat app efficiently.
+
+## Setting Up the Supabase Backend
+
+The first step is to configure our backend. Supabase makes this process simple.
+
+### 1. Create a Supabase Project
+
+If you don't have an account, head over to [supabase.com](https://supabase.com) and sign up. Once you're in, create a new project. Give it a name, generate a secure database password, and choose a region. Your project will be ready in a couple of minutes.
+
+### 2. Create the `messages` Table
+
+Next, we need a table to store our chat messages.
+
+1.  Navigate to the **Table Editor** in your Supabase dashboard.
+2.  Click **Create a new table**.
+3.  Name the table `messages`.
+4.  Disable **Row Level Security (RLS)** for now to make development easier. We can enable it later for production.
+5.  Add the following columns:
+    *   `id`: `int8` (primary key, generated automatically).
+    *   `created_at`: `timestamptz` (default value `now()`).
+    *   `content`: `text`.
+    *   `user_id`: `uuid` (to link messages to users, assuming you use Supabase Auth).
+
+### 3. Enable Realtime
+
+Supabase Realtime listens for database changes and broadcasts them to connected clients. To enable it for our `messages` table:
+
+1.  Go to **Database** > **Replication**.
+2.  Find your `messages` table and enable it for replication.
+
+That’s it for the backend setup. Now let's move to the Flutter app.
+
+## Building the Flutter Chat App
+
+With the backend ready, we can start building the frontend.
+
+### 1. Project Setup and Dependencies
+
+Create a new Flutter project and add the Supabase dependency to your `pubspec.yaml` file.
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  supabase_flutter: ^2.5.0 # Check for the latest version
+```
+
+Run `flutter pub get` to install the package. Next, initialize Supabase in your `main.dart` file. You can find your Project URL and anon key in your Supabase project's **API Settings**.
+
+```dart
+// main.dart
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Required for async main
+  
+  await Supabase.initialize(
+    url: 'YOUR_SUPABASE_URL',
+    anonKey: 'YOUR_SUPABASE_ANON_KEY',
+  );
+  runApp(MyApp());
+}
+
+final supabase = Supabase.instance.client;
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Chat App',
+      home: ChatPage(), // We will create this next
+    );
+  }
+}
+```
+
+### 2. Building the Chat Page
+
+Let's create a new file, `chat_page.dart`, and build our UI. We'll use a `StatefulWidget` to manage the message stream and the text input controller.
+
+The core of our real-time functionality is the `StreamBuilder`. This widget listens to a stream of data and rebuilds its UI whenever new data arrives.
+
+```dart
+// chat_page.dart
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class ChatPage extends StatefulWidget {
+  @override
+  _ChatPageState createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  final _textController = TextEditingController();
+  final _messagesStream = Supabase.instance.client
+      .from('messages')
+      .stream(primaryKey: ['id']).order('created_at');
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendMessage() async {
+    final content = _textController.text.trim();
+    if (content.isEmpty) {
+      return;
+    }
+    _textController.clear();
+    
+    // For this example, we assume a user is signed in.
+    // Replace with your actual user management logic.
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('You must be logged in to send a message.'),
+        ));
+        return;
+    }
+
+    await Supabase.instance.client.from('messages').insert({
+      'content': content,
+      'user_id': userId,
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Real-Time Chat')),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<List<Map<String, dynamic>>>(
+              stream: _messagesStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final messages = snapshot.data!;
+                return ListView.builder(
+                  reverse: true, // Show newest messages at the bottom
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    return ListTile(
+                      title: Text(message['content']),
+                      subtitle: Text(message['created_at']),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          _MessageComposer(), // The input field
+        ],
+      ),
+    );
+  }
+
+  // A helper widget for the message input field
+  Widget _MessageComposer() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                hintText: 'Enter your message...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.send),
+            onPressed: _sendMessage,
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+### 3. Understanding the Code
+
+Let's break down the key parts of our `ChatPage` widget.
+
+#### The Message Stream
+
+```dart
+final _messagesStream = Supabase.instance.client
+    .from('messages')
+    .stream(primaryKey: ['id']).order('created_at');
+```
+
+-   **`Supabase.instance.client.from('messages')`**: This targets our `messages` table in the Supabase database.
+-   **`.stream(primaryKey: ['id'])`**: This is the magic function. It creates a WebSocket connection to Supabase and listens for any changes (inserts, updates, deletes) in the `messages` table. The `primaryKey` is required for Supabase to efficiently track changes.
+-   **`.order('created_at')`**: We sort the messages by their creation timestamp to ensure they are displayed in the correct order.
+
+#### The `StreamBuilder` Widget
+
+The `StreamBuilder` connects our UI to the `_messagesStream`.
+
+```dart
+StreamBuilder<List<Map<String, dynamic>>>(
+  stream: _messagesStream,
+  builder: (context, snapshot) {
+    // ... handle loading, error, and data states
+  }
+)
+```
+
+-   **`stream`**: We pass our `_messagesStream` here.
+-   **`builder`**: This function is called every time a new event arrives on the stream. The `snapshot` object contains the latest data.
+-   **State Handling**: We check `snapshot.hasData` to see if we have messages. If not, we show a loading indicator. If there's an error, we display it.
+-   **Displaying Data**: When data is available (`snapshot.data!`), we use a `ListView.builder` to efficiently render the list of messages.
+
+#### Sending a Message
+
+The `_sendMessage` function handles the logic for sending a new message.
+
+```dart
+Future<void> _sendMessage() async {
+  final content = _textController.text.trim();
+  if (content.isEmpty) {
+    return; // Don't send empty messages
+  }
+  _textController.clear();
+
+  // Get current user's ID
+  final userId = Supabase.instance.client.auth.currentUser?.id;
+
+  // Insert the new message into the database
+  await Supabase.instance.client.from('messages').insert({
+    'content': content,
+    'user_id': userId,
+  });
+}
+```
+
+-   We get the text from our `_textController`.
+-   We perform a database **insert** operation on the `messages` table.
+-   Once the new row is inserted, Supabase's Realtime feature automatically detects this change and broadcasts it to all connected clients.
+-   Our `StreamBuilder` receives the new data and instantly rebuilds the UI to show the new message. No manual state management (`setState`) is needed for the message list!
+
+## Conclusion
+
+We've successfully built a functional, real-time chat application using Flutter and Supabase. We went from setting up a Supabase project and database table to building a complete Flutter UI that sends and receives messages in real-time. The magic lies in Supabase's stream functionality and Flutter's `StreamBuilder` widget, which together handle all the complexity of real-time data synchronization.
+
+This is just the beginning. You can expand this project by implementing a full authentication flow with Supabase Auth, adding user profiles, displaying usernames next to messages, and enabling Row Level Security for a production-ready application. The combination of Flutter and Supabase provides a powerful and efficient foundation for building modern, scalable apps.
