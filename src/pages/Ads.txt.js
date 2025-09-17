@@ -1,3 +1,0 @@
-export async function GET(context) {
-  return "google.com, pub-7415679537348503, DIRECT, f08c47fec0942fa0";
-}
