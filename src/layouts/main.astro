@@ -79,6 +79,15 @@ const card = headCard
         });
       };
     </script>
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7415679537348503"
+      crossorigin="anonymous"></script>
+    <script
+      async
+      custom-element="amp-auto-ads"
+      src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"
+    ></script>
     <!-- prettier-ignore -->
     <script type="application/ld+json" is:inline set:html={JSON.stringify(card)}></script>
     <style>
@@ -92,6 +101,8 @@ const card = headCard
   </head>
   <body class="antialiased bg-white dark:bg-neutral-950">
     <GoogleTagBody />
+    <amp-auto-ads type="adsense" data-ad-client="ca-pub-7415679537348503">
+    </amp-auto-ads>
     <SquareLines />
     <Header />
     <slot />
