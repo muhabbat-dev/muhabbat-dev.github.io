@@ -1,22 +1,29 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout'
-import TitlePage from '@/components/TitlePage'
-import { getTags } from '@/utils'
-const tags = await getTags()
+import BaseLayout from "@/layouts/BaseLayout";
+import TitlePage from "@/components/TitlePage";
+import { getTags } from "@/utils";
+const tags = await getTags();
 ---
 
-<BaseLayout title='Tags'>
-	<TitlePage title='Tags' />
-	<div class='flex justify-center flex-wrap gap-4'>
-		{
-			tags.map((tag) => (
-				<a
-					href={`/blog/tags/${tag}`}
-					class='inline-block bg-secondary dark:bg-primary text-white  rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2'
-				>
-					#{tag}
-				</a>
-			))
-		}
-	</div>
+<BaseLayout title="Tags">
+  <TitlePage title="Tags" />
+  <div class="flex justify-center flex-wrap gap-4">
+    {
+      tags.map((tag) => (
+        <a
+          href={`/blog/tags/${tag}`}
+          class="inline-block bg-secondary dark:bg-primary text-white  rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2"
+        >
+          #{tag}
+        </a>
+      ))
+    }
+
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-format="autorelaxed"
+      data-ad-client="ca-pub-7415679537348503"
+      data-ad-slot="1374257730"></ins>
+  </div>
 </BaseLayout>
