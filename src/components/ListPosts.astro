@@ -17,27 +17,27 @@ const { posts, FirstBig = false } = Astro.props;
     FirstBig && `md:[&>*:first-child]:col-span-2`,
   )}
 >
+  <!-- {
+  (!FirstBig || FirstBig == null || FirstBig === undefined) &&
+  <ins
+    class="adsbygoogle"
+    style="display:block"
+    data-ad-format="autorelaxed"
+    data-ad-client="ca-pub-7415679537348503"
+    data-ad-slot="1374257730"
+  />
+
+} -->
   {
     posts.map(async (post, index) => {
       const { remarkPluginFrontmatter } = await post.render();
       return (
-        <div>
-          {(index === 1 || index === 5) && (
-            <ins
-              class="adsbygoogle"
-              style="display:block"
-              data-ad-format="autorelaxed"
-              data-ad-client="ca-pub-7415679537348503"
-              data-ad-slot="1374257730"
-            />
-          )}
-          <PostCard
-            id={post.id}
-            data={post.data}
-            slug={post.slug}
-            readTime={remarkPluginFrontmatter.minutesRead}
-          />
-        </div>
+        <PostCard
+          id={post.id}
+          data={post.data}
+          slug={post.slug}
+          readTime={remarkPluginFrontmatter.minutesRead}
+        />
       );
     })
   }
