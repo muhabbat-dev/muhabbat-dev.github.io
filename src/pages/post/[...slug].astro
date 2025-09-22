@@ -49,28 +49,51 @@ const { Content, headings, remarkPluginFrontmatter } = await post.render();
   slug={post.slug}
 >
   <!-- post -->
-  <article class="max-w-full w-full flex flex-col items-center">
-    <div
-      class="prose prose-sm md:prose-lg prose-code:text-xs dark:prose-invert mb-12 md:px-56 px-5 max-w-[100vw] sm:text-start"
-    >
-      <!-- Horizontal ad -->
-      <ins
-        class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-7415679537348503"
-        data-ad-slot="2980813441"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
-      <Content components={{ pre: Code, SButton }} />
+  <div class="w-full flex flex-col md:flex-row">
+    <!-- Vertical Ad -->
+    <div class="w-1/5 md:block hidden"></div>
+    <div class="md:w-3/5 w-full">
+      <article class="max-w-full w-full flex flex-col items-center">
+        <div
+          class="prose prose-sm md:prose-lg prose-code:text-xs dark:prose-invert mb-12 md:px-2 max-w-[100vw] sm:text-start"
+        >
+          <!-- Horizontal ad -->
+          <ins
+            class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-7415679537348503"
+            data-ad-slot="2980813441"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+          <Content components={{ pre: Code, SButton }} />
+        </div>
+      </article>
     </div>
-    <!-- Buy me a coffee -->
-    <!-- <a href='https://buymeacoffee.com/codingbuddy' target='__blank'
-				><img src='/buymecoffee.png' class='w-48' /></a
-			>
-			<p class='mb-5'></p> -->
+    <div class="w-full md:w-1/5 h-96 sticky top-10">
+      <!-- Show ad -->
+      <!-- Horizontal -->
+      <div class="block md:hidden">
+        <ins
+          class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-7415679537348503"
+          data-ad-slot="2980813441"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      </div>
+      <!-- Vertical -->
+      <div class="hidden md:block">
+        <ins
+          class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-7415679537348503"
+          data-ad-slot="8211182729"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      </div>
+    </div>
+  </div>
 
-    <!-- related posts -->
-  </article>
   <!-- Horizontal -->
   <ins
     class="adsbygoogle"
