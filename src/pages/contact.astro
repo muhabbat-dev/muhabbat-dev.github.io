@@ -1,71 +1,95 @@
 ---
-import Layout from "../layouts/main.astro"
+import Layout from "../layouts/main.astro";
 ---
 
-<Layout title="My Projects" meta={[ ]}>
-<section>
-    <h1 class="text-2xl dark:text-white text-center mt-10">
-        Contact Me!
-    </h1>
+<Layout title="My Projects" meta={[]}>
+  <section>
+    <h1 class="text-2xl dark:text-white text-center mt-10">Contact Me!</h1>
     <div>
-        <form class="flex flex-col px-20 [&_*]:my-2" action="https://api.web3forms.com/submit" method="POST" id="form">
-            <input class="border" type="hidden" name="access_key" value="26c4f303-4788-47b1-9573-55c6239bbeac">
-            <h3 class="dark:text-white">Name</h3>
-            <input class="border" type="text" name="name" required>
-            <h3 class="dark:text-white">Email</h3>
-            <input class="border"  type="email" name="email" required>
-            <h3 class="dark:text-white">Message</h3>
-            <textarea class="border"  name="message" required></textarea>
-            <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-            <div class="flex justify-center">
-                <button type="submit" class="border px-10 py-2 bg-blue-500 hover:bg-blue-400 text-white font-normal text-base">Submit Form</button>
-            </div>
-        </form>
+      <form
+        class="flex flex-col px-20 [&_*]:my-2"
+        action="https://api.web3forms.com/submit"
+        method="POST"
+        id="form"
+      >
+        <input
+          class="border"
+          type="hidden"
+          name="access_key"
+          value="26c4f303-4788-47b1-9573-55c6239bbeac"
+        />
+        <h3 class="dark:text-white">Name</h3>
+        <input class="border" type="text" name="name" required />
+        <h3 class="dark:text-white">Email</h3>
+        <input class="border" type="email" name="email" required />
+        <h3 class="dark:text-white">Message</h3>
+        <textarea class="border" name="message" required></textarea>
+        <input
+          type="checkbox"
+          name="botcheck"
+          class="hidden"
+          style="display: none;"
+        />
+        <div class="flex justify-center">
+          <button
+            type="submit"
+            class="border px-10 py-2 bg-blue-500 hover:bg-blue-400 text-white font-normal text-base"
+            >Submit Form</button
+          >
+        </div>
+      </form>
     </div>
 
     <div id="result"></div>
-
-</section>
+  </section>
+  <!-- Horizontal -->
+  <ins
+    class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-7415679537348503"
+    data-ad-slot="2980813441"
+    data-ad-format="auto"
+    data-full-width-responsive="true"></ins>
 </Layout>
 
-
 <script>
-    const form : any = document.getElementById('form')!;
-    const result = document.getElementById('result')!;
-    
-    form.addEventListener('submit', function(e : SubmitEvent) {
-      e.preventDefault();
-      const formData = new FormData(form);
-      const object = Object.fromEntries(formData);
-      const json = JSON.stringify(object);
-      result.innerHTML = "Please wait..."
-    
-        fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: json
-            })
-            .then(async (response) => {
-                let json = await response.json();
-                if (response.status == 200) {
-                    result.innerHTML = "Message submitted successfully! I will get back to you";
-                } else {
-                    console.log(response);
-                    result.innerHTML = json.message;
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                result.innerHTML = "Something went wrong!";
-            })
-            .then(function() {
-                form.reset();
-                setTimeout(() => {
-                    result.style.display = "none";
-                }, 3000);
-            });
-    });
-    </script>
+  const form: any = document.getElementById("form")!;
+  const result = document.getElementById("result")!;
+
+  form.addEventListener("submit", function (e: SubmitEvent) {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
+    result.innerHTML = "Please wait...";
+
+    fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: json,
+    })
+      .then(async (response) => {
+        let json = await response.json();
+        if (response.status == 200) {
+          result.innerHTML =
+            "Message submitted successfully! I will get back to you";
+        } else {
+          console.log(response);
+          result.innerHTML = json.message;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        result.innerHTML = "Something went wrong!";
+      })
+      .then(function () {
+        form.reset();
+        setTimeout(() => {
+          result.style.display = "none";
+        }, 3000);
+      });
+  });
+</script>

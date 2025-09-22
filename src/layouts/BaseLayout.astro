@@ -30,13 +30,11 @@ const { title, description, image, articleDate, keywords } = Astro.props;
       async
       custom-element="amp-ad"
       src="https://cdn.ampproject.org/v0/amp-ad-0.1.js" is:inline></script> -->
-      <script
+    <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7415679537348503"
-      crossorigin="anonymous" is:inline></script>
-      <script is:inline>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+      crossorigin="anonymous"
+      is:inline></script>
   </head>
   <body class="bg-white text-stone-950 dark:bg-[#0a0910] dark:text-white">
     <amp-auto-ads type="adsense" data-ad-client="ca-pub-7415679537348503">
@@ -74,6 +72,7 @@ const { title, description, image, articleDate, keywords } = Astro.props;
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-QQSGW40WTM"
       is:inline></script>
+
     <script is:inline>
       // @ts-ignore
       window.dataLayer = window.dataLayer || [];
@@ -85,6 +84,9 @@ const { title, description, image, articleDate, keywords } = Astro.props;
       gtag("js", new Date());
       // @ts-ignore
       gtag("config", "G-QQSGW40WTM");
+    </script>
+    <script is:inline>
+      (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
   </body>
 </html>

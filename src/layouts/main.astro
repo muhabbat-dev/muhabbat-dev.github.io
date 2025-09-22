@@ -87,13 +87,11 @@ const card = headCard
       async
       custom-element="amp-ad"
       src="https://cdn.ampproject.org/v0/amp-ad-0.1.js" is:inline></script> -->
-      <script
+    <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7415679537348503"
-      crossorigin="anonymous" is:inline></script>
-    <script is:inline>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+      crossorigin="anonymous"
+      is:inline></script>
     <!-- prettier-ignore -->
     <script type="application/ld+json" is:inline set:html={JSON.stringify(card)}></script>
     <style>
@@ -111,15 +109,20 @@ const card = headCard
     </amp-auto-ads> -->
     <SquareLines />
     <Header />
-    <ins class="adsbygoogle"
+    <!-- Horizontal -->
+    <ins
+      class="adsbygoogle"
       style="display:block"
       data-ad-client="ca-pub-7415679537348503"
-      data-ad-slot="1234567890"
+      data-ad-slot="2980813441"
       data-ad-format="auto"
       data-full-width-responsive="true"></ins>
     <slot />
     <Footer />
     <script src="../assets/js/main.js"></script>
     <Fragment set:html={import.meta.env.FOOTER_INJECT} />
+    <script is:inline>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
   </body>
 </html>

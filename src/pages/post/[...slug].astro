@@ -2,13 +2,13 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import BlogPost from "@/layouts/BlogPost";
 import Code from "@/components/mdx/Code";
-import ListRelatedPosts from "@/components/ListRelatedPosts";
-import Share from "@/components/Share";
-import TableOfContents from "@/components/TableOfContents";
+// import ListRelatedPosts from "@/components/ListRelatedPosts";
+// import Share from "@/components/Share";
+// import TableOfContents from "@/components/TableOfContents";
 import { getPosts } from "@/utils";
 import SButton from "@/components/mdx/SButton";
 import Disqus from "@/components/Disqus";
-import { disqusConfig } from "@/data/disqus.config";
+// import { disqusConfig } from "@/data/disqus.config";
 
 const posts = await getCollection("blog");
 export async function getStaticPaths() {
@@ -33,7 +33,7 @@ const getRelatedPosts = (post: Props) => {
   return relatedPosts.slice(0, MAX_POSTS);
 };
 
-const relatedPosts = getRelatedPosts(post);
+// const relatedPosts = getRelatedPosts(post);
 
 const { Content, headings, remarkPluginFrontmatter } = await post.render();
 
@@ -53,12 +53,14 @@ const { Content, headings, remarkPluginFrontmatter } = await post.render();
     <div
       class="prose prose-sm md:prose-lg prose-code:text-xs dark:prose-invert mb-12 md:px-56 px-5 max-w-[100vw] sm:text-start"
     >
-     <ins class="adsbygoogle"
-      style="display:block"
-      data-ad-client="ca-pub-7415679537348503"
-      data-ad-slot="1234567890"
-      data-ad-format="auto"
-      data-full-width-responsive="true"></ins>
+      <!-- Horizontal ad -->
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-7415679537348503"
+        data-ad-slot="2980813441"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
       <Content components={{ pre: Code, SButton }} />
     </div>
     <!-- Buy me a coffee -->
@@ -69,11 +71,13 @@ const { Content, headings, remarkPluginFrontmatter } = await post.render();
 
     <!-- related posts -->
   </article>
-  <ins class="adsbygoogle"
-      style="display:block"
-      data-ad-client="ca-pub-7415679537348503"
-      data-ad-slot="1234567890"
-      data-ad-format="auto"
-      data-full-width-responsive="true"></ins>
+  <!-- Horizontal -->
+  <ins
+    class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-7415679537348503"
+    data-ad-slot="2980813441"
+    data-ad-format="auto"
+    data-full-width-responsive="true"></ins>
   <Disqus slug={post.slug} />
 </BlogPost>
