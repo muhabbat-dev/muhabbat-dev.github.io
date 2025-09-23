@@ -92,6 +92,22 @@ const card = headCard
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7415679537348503"
       crossorigin="anonymous"
       is:inline></script>
+
+    <script
+      async
+      type="application/javascript"
+      src="https://news.google.com/swg/js/v1/swg-basic.js"
+      is:inline></script>
+    <script is:inline>
+      (self.SWG_BASIC = self.SWG_BASIC || []).push((basicSubscriptions) => {
+        basicSubscriptions.init({
+          type: "NewsArticle",
+          isPartOfType: ["Product"],
+          isPartOfProductId: "CAow1q7BDA:openaccess",
+          clientOptions: { theme: "light", lang: "en-GB" },
+        });
+      });
+    </script>
     <!-- prettier-ignore -->
     <script type="application/ld+json" is:inline set:html={JSON.stringify(card)}></script>
     <style>
