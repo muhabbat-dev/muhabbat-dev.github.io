@@ -1,0 +1,198 @@
+---
+draft: false
+title: Reusable React Components With TypeScript A Step By Step Guide
+slug: reusable-react-components-with-typescript-a-step-by-step-guide
+heroImage: /src/assets/images/blog/2025/reusable-react-components-with-typescript-a-step-by-step-guide.jpg
+category: Web Development
+description: A practical guide for developers on building flexible, type-safe, and reusable React components using TypeScript. Learn to stop repeating code and write cleaner, more maintainable UIs with simple examples.
+pubDate: 2025-09-26T20:29:07.159Z
+keywords:
+  - react components
+  - typescript
+  - reusable components
+  - react typescript guide
+  - component props
+tags:
+  - react js
+  - typescript
+---
+
+# Reusable React Components With TypeScript A Step By Step Guide
+
+If you've written any React, you've probably found yourself copying and pasting a chunk of JSX for a button or a card. It works, but soon you have ten slightly different buttons, and changing one means changing all ten. It’s a pain.
+
+Think of it like LEGOs. You don't create a brand new, unique brick every time you need a 2x4 piece. You just grab one from the box. That's what reusable components are. They are our LEGO bricks for building UIs. And when you add TypeScript, you make sure each brick only connects where it's supposed to.
+
+This guide will show you how to create these simple, reusable components in React with TypeScript. No fluff, just practical steps.
+
+## Why Reusability Matters
+
+Writing code that you can reuse is all about being efficient. It follows the **DRY (Don't Repeat Yourself)** principle. Instead of writing the same button styling and logic in five different places, you write it once in a component and use it everywhere.
+
+The benefits are straightforward:
+
+- **Easier to Maintain:** Need to change the button color? You only have to edit one file.
+- **Consistent UI:** Your app looks and feels the same everywhere because you’re using the same core pieces.
+- **Faster Development:** You build faster by composing UIs from existing components instead of starting from scratch.
+
+TypeScript adds a layer of safety. It makes sure you pass the right data (props) to your components, catching errors before they even happen.
+
+## The Core Idea A Simple Button Component
+
+Let's start with a basic button. The goal is to create a component that can accept different text and handle a click event.
+
+First, we define the "shape" of the data our component expects using a TypeScript `type` or `interface`. These are the component's props.
+
+```typescript
+// Button.tsx
+
+import React from 'react';
+
+// Define the props our button will accept
+type ButtonProps = {
+  text: string;
+  onClick: () => void; // A function that takes no arguments and returns nothing
+};
+
+export const Button = ({ text, onClick }: ButtonProps) => {
+  return (
+    <button onClick={onClick} style={{ padding: '10px 20px', cursor: 'pointer' }}>
+      {text}
+    </button>
+  );
+};
+```
+
+Here, `ButtonProps` tells us that our `Button` component _must_ receive a `text` (string) and an `onClick` (function) prop.
+
+Now, we can use it anywhere in our app:
+
+```typescript
+// App.tsx
+
+import { Button } from './Button';
+
+function App() {
+  const handleSave = () => {
+    console.log('Saved!');
+  };
+
+  const handleCancel = () => {
+    console.log('Canceled!');
+  };
+
+  return (
+    <div>
+      <Button text="Save Changes" onClick={handleSave} />
+      <Button text="Cancel" onClick={handleCancel} />
+    </div>
+  );
+}
+```
+
+We just used the same component to create two different buttons with different text and actions. Simple and clean.
+
+## Making Components More Flexible
+
+A good reusable component is flexible. Let's add some common features.
+
+### Handling Different Variants
+
+What if you need a primary button for main actions and a secondary one for less important ones? This is like a t-shirt that comes in different colors. We can add a `variant` prop.
+
+Let's update our `ButtonProps` to include an optional `variant`.
+
+```typescript
+// Button.tsx
+
+type ButtonProps = {
+  text: string;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary'; // Optional prop
+};
+
+export const Button = ({ text, onClick, variant = 'primary' }: ButtonProps) => {
+  const style = {
+    padding: '10px 20px',
+    cursor: 'pointer',
+    backgroundColor: variant === 'primary' ? 'blue' : 'gray',
+    color: 'white',
+    border: 'none',
+  };
+
+  return (
+    <button onClick={onClick} style={style}>
+      {text}
+    </button>
+  );
+};
+```
+
+We used a TypeScript union type `'primary' | 'secondary'` to restrict the possible values for `variant`. We also set a default value of `'primary'` in the component. Now we can easily control the button's appearance.
+
+```typescript
+// Usage in App.tsx
+<Button text="Submit" onClick={handleSubmit} variant="primary" />
+<Button text="Learn More" onClick={handleLearnMore} variant="secondary" />
+```
+
+### Passing Children for Content
+
+Sometimes you need more than just text inside a component. Maybe you want an icon next to the text in a button, or complex content inside a `Card`. This is what the `children` prop is for.
+
+Let's build a `Card` component that can wrap any content.
+
+```typescript
+// Card.tsx
+
+import React from 'react';
+
+type CardProps = {
+  children: React.ReactNode; // This special type accepts anything React can render
+};
+
+export const Card = ({ children }: CardProps) => {
+  const style = {
+    padding: '16px',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  };
+
+  return (
+    <div style={style}>
+      {children}
+    </div>
+  );
+};
+```
+
+The `React.ReactNode` type is very flexible. Now we can put anything inside our card.
+
+```typescript
+// App.tsx
+import { Card } from './Card';
+
+function App() {
+  return (
+    <Card>
+      <h2>Welcome!</h2>
+      <p>This is some content inside our reusable card component.</p>
+      <Button text="Get Started" onClick={() => {}} />
+    </Card>
+  );
+}
+```
+
+This pattern, called composition, is powerful. You build complex UI by putting simple components inside each other.
+
+## Final Tips for Great Reusable Components
+
+1.  **Keep them focused.** A component should do one thing well. A `Button` component shouldn't fetch data.
+2.  **Define clear props.** Your props are your component's API. Make them easy to understand with TypeScript.
+3.  **Avoid specific business logic.** A reusable component should be dumb. It just displays what you give it. Pass functions as props to handle logic.
+4.  **Think about composition.** Don't build a massive, all-in-one component. Build small, focused ones and combine them.
+
+## Conclusion
+
+Building reusable components isn't a complex architectural decision; it’s a simple habit. It’s about thinking in terms of LEGOs instead of custom-carved parts. By starting with simple components, defining clear props with TypeScript, and focusing on composition, you write code that is cleaner, easier to maintain, and much faster to build with.
