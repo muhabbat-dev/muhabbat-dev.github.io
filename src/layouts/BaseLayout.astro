@@ -29,12 +29,10 @@ const { title, description, image, articleDate, keywords } = Astro.props;
       is:inline></script>
   </head>
   <body class="bg-white text-stone-950 dark:bg-[#0a0910] dark:text-white">
-    <amp-auto-ads type="adsense" data-ad-client="ca-pub-7415679537348503">
-    </amp-auto-ads>
     <GoogleTagBody />
     <Header />
     <main
-      class="px-5 sm:mx-auto sm:max-w-2xl sm:px-8 lg:px-0 antialiased md:max-w-6xl grid gap-12 mt-4 overflow-hidden md:overflow-visible"
+      class="md:px-5 sm:mx-auto sm:max-w-2xl sm:px-8 lg:px-0 antialiased md:max-w-6xl grid gap-12 mt-4 overflow-hidden md:overflow-visible"
     >
       <slot />
       <Footer />

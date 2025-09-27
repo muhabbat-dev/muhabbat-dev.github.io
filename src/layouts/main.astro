@@ -13,8 +13,9 @@ type Props = {
   meta: { name: string; content: string }[];
   ogMeta?: { property: string; content: string }[];
   headCard?: HeadCard;
+  showConsultation?: boolean;
 };
-const { title, meta, ogMeta, headCard } = Astro.props;
+const { title, meta, ogMeta, headCard, showConsultation } = Astro.props;
 const card = headCard
   ? {
       "@context": "https://schema.org",
@@ -71,24 +72,20 @@ const card = headCard
       src="https://assets.calendly.com/assets/external/widget.js"
       type="text/javascript"
       async></script>
-    <script type="text/javascript">
-      window.onload = function () {
-        Calendly.initBadgeWidget({
-          url: "https://calendly.com/muhabbat-ali/free-consultation",
-          text: "Free Consultation",
-          color: "#0069ff",
-          textColor: "#ffffff",
-        });
-      };
-    </script>
-    <!-- <script
-      async
-      custom-element="amp-auto-ads"
-      src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js" is:inline></script>
-    <script
-      async
-      custom-element="amp-ad"
-      src="https://cdn.ampproject.org/v0/amp-ad-0.1.js" is:inline></script> -->
+    {
+      showConsultation ? (
+        <script type="text/javascript" is:inline>
+          window.onload = function(){" "}
+          {Calendly.initBadgeWidget({
+            url: "https://calendly.com/muhabbat-ali/free-consultation",
+            text: "Free Consultation",
+            color: "#0069ff",
+            textColor: "#ffffff",
+          })}
+          ;
+        </script>
+      ) : null
+    }
     <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7415679537348503"
@@ -123,16 +120,22 @@ const card = headCard
   </head>
   <body class="antialiased bg-white dark:bg-neutral-950">
     <GoogleTagBody />
-    <!-- <amp-auto-ads type="adsense" data-ad-client="ca-pub-7415679537348503" is:inline>
-    </amp-auto-ads> -->
     <SquareLines />
     <Header />
-    <!-- Horizontal -->
-    <ins
+    <!-- Horizontal Ad -->
+    <!-- <ins
       class="adsbygoogle"
       style="display:block"
       data-ad-client="ca-pub-7415679537348503"
       data-ad-slot="2980813441"
+      data-ad-format="auto"
+      data-full-width-responsive="true"></ins> -->
+
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-7415679537348503"
+      data-ad-slot="6073880646"
       data-ad-format="auto"
       data-full-width-responsive="true"></ins>
     <slot />
