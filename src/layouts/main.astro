@@ -73,9 +73,9 @@ const card = headCard
       type="text/javascript"
       async></script>
     {
-      showConsultation ? (
+      showConsultation && (
         <script type="text/javascript" is:inline>
-          window.onload = function(){" "}
+          window.onload = function (){" "}
           {Calendly.initBadgeWidget({
             url: "https://calendly.com/muhabbat-ali/free-consultation",
             text: "Free Consultation",
@@ -84,7 +84,7 @@ const card = headCard
           })}
           ;
         </script>
-      ) : null
+      )
     }
     <script
       async
