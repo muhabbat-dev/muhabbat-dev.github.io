@@ -1,0 +1,118 @@
+---
+draft: false
+title: 7 Core components of Kubernetes every DevOps engineer should know
+slug: 7-core-components-of-kubernetes-every-devops-engineer-should-know
+heroImage: /src/assets/images/blog/2025/7-core-components-of-kubernetes-every-devops-engineer-should-know.png
+category: DevOps
+description: A must-read guide for DevOps engineers breaking down the 7 essential Kubernetes components. Understand the API Server, etcd, Pods, and more to master K8s architecture and streamline your workflow.
+pubDate:  2025-09-28T10:26:50.019Z
+keywords:
+- kubernetes components
+- kubernetes architecture
+- what is kubernetes
+- devops tools
+- container orchestration
+tags:
+- kubernetes
+- devops
+- docker
+- containers
+- api server
+- etcd
+- scheduler
+- kubelet
+- pod
+---
+
+Kubernetes can feel complicated when you first start. It’s a powerful system with a lot of moving parts. But once you understand its core components, it all starts to make sense.
+
+Think of Kubernetes like a busy restaurant kitchen. The head chef doesn't cook every meal. Instead, they direct a team of specialists who handle different tasks to get the food out. Kubernetes is the head chef for your applications, and its components are the specialists.
+
+Let's walk through the seven key components that make it all work.
+
+## The Control Plane: The Brain of the Operation
+
+The control plane is the management center. It makes all the decisions about the cluster, like scheduling applications and responding to failures. It’s the head chef and management staff of our restaurant.
+
+### 1. API Server
+
+The API Server is the front desk of the entire operation. Every request to view or change the state of the cluster goes through it. When you use `kubectl`, you are talking directly to the API Server. It validates and processes requests, then updates the cluster’s state in `etcd`.
+
+**Analogy:** It’s the head waiter who takes all orders from customers (you) and communicates them to the kitchen staff (other components).
+
+For example, this simple command asks the API Server for a list of all running pods.
+
+```bash
+kubectl get pods
+```
+
+### 2. etcd
+
+`etcd` is the single source of truth for the entire cluster. It’s a simple, reliable key-value store that holds all configuration data and information about the state of the cluster. Everything from pod details to network configurations is stored here.
+
+**Analogy:** This is the restaurant's official recipe book and order log. It stores exactly what was ordered and how it should be made. If there's any confusion, everyone checks this book.
+
+### 3. Scheduler
+
+The Scheduler’s job is to assign new pods to a worker node. It watches the API Server for newly created pods that have no node assigned. Then, based on resource needs, policies, and node availability, it picks the best node for that pod.
+
+**Analogy:** The scheduler is the person who decides which chef (node) gets which cooking order (pod). It considers factors like how busy each chef is and if they have the right equipment (e.g., a GPU).
+
+### 4. Controller Manager
+
+The Controller Manager is a daemon that runs several controller processes in the background. Each controller is responsible for a specific part of the cluster. For example, the `ReplicaSet` controller makes sure the correct number of pods for an application is always running.
+
+**Analogy:** It’s the kitchen manager who constantly checks if the orders are being made correctly. If a dish is ruined, the manager tells a chef to make a new one to fulfill the order. It works to make the current state match the desired state.
+
+## The Worker Nodes: Where the Work Gets Done
+
+Worker nodes are the machines (virtual or physical) that run your applications. They are the kitchen stations where the actual cooking happens. Each worker node contains a few key components.
+
+### 5. Kubelet
+
+The Kubelet is an agent that runs on every single worker node. It receives instructions from the control plane via the API Server and makes sure the containers described in the pod specifications are running and healthy.
+
+**Analogy:** The Kubelet is the station chef. It gets its orders and ensures the dish (container) is actually on the stove and cooking as specified in the recipe.
+
+### 6. Kube Proxy
+
+The Kube Proxy is a network proxy that runs on each node. Its job is to manage network connectivity for pods. It ensures that each pod gets a unique IP address and handles the routing of traffic to the correct pods based on IP addresses and port numbers.
+
+**Analogy:** It’s the waiter inside the kitchen who knows exactly which dish goes to which service window. It manages all the internal traffic routes to make sure everything gets where it needs to go.
+
+### 7. Pods
+
+A Pod is the smallest and simplest unit in Kubernetes that you create or deploy. It represents a single instance of your application. A Pod can contain one or more containers, but most commonly, it runs just one. These containers share the same network and storage resources.
+
+**Analogy:** A Pod is the final dish on a plate. The plate (Pod) holds the main item (your application container) and can also hold side items that support it (sidecar containers).
+
+Here’s a simple YAML file that defines a Pod running a single Nginx container.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    ports:
+    - containerPort: 80
+```
+
+When you apply this configuration, the Scheduler finds a node, and the Kubelet on that node starts the Nginx container.
+
+## Conclusion
+
+Kubernetes isn't magic. It's a system with a clear separation of duties. The control plane acts as the brain, making decisions, while worker nodes do the actual work.
+
+-   **API Server:** The front door.
+-   **etcd:** The source of truth.
+-   **Scheduler:** The decision-maker for placement.
+-   **Controller Manager:** The enforcer of the desired state.
+-   **Kubelet:** The agent on each node.
+-   **Kube Proxy:** The network router.
+-   **Pods:** The actual running applications.
+
+By understanding these seven components, you’re no longer just using commands. You’re understanding how the system thinks, which is the key to debugging issues and building reliable applications on Kubernetes.
