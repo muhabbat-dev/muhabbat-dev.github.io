@@ -30,13 +30,13 @@ create a new component file with all canvas functionalities under `./components/
 and add the following code.
 
 ```jsx
-import React from 'react'
+import React from "react";
 
 const Canvas = () => {
-	return <canvas id='myCanvas'></canvas>
-}
+  return <canvas id="myCanvas"></canvas>;
+};
 
-export default Canvas
+export default Canvas;
 ```
 
 ## Setting up canvas with fabric.js
@@ -44,25 +44,25 @@ export default Canvas
 We need to import `useEffect`, `useRef`, and `fabric` object from the library for setting the canvas.
 
 ```jsx
-import React, { useEffect, useRef } from 'react'
-import { fabric } from 'fabric'
+import React, { useEffect, useRef } from "react";
+import { fabric } from "fabric";
 
 const Canvas = () => {
-	const canvasRef = useRef()
+  const canvasRef = useRef();
 
-	useEffect(() => {
-		const canvas = new fabric.Canvas(canvasRef.current, {
-			width: 800,
-			height: 500,
-			backgroundColor: '#dedede'
-		})
-		const circle = new fabric.Circle({ radius: 50, fill: 'teal', top: 100 })
-		canvas.add(circle)
-	}, [])
-	return <canvas id='myCanvas'></canvas>
-}
+  useEffect(() => {
+    const canvas = new fabric.Canvas(canvasRef.current, {
+      width: 800,
+      height: 500,
+      backgroundColor: "#dedede",
+    });
+    const circle = new fabric.Circle({ radius: 50, fill: "teal", top: 100 });
+    canvas.add(circle);
+  }, []);
+  return <canvas id="myCanvas"></canvas>;
+};
 
-export default Canvas
+export default Canvas;
 ```
 
 This will create the following canvas view
@@ -76,10 +76,10 @@ Now if we apply the recording functionality straight on this canvas. It will wor
 Fabricjs library provides a very simple function for animating objects (a circle in our case), This function will animate the object from its current position to the left side by adding 500 pixels.
 
 ```javascript
-circle.animate('left', '+=500', {
-	onChange: canvas.renderAll.bind(canvas),
-	onComplete: () => {}
-})
+circle.animate("left", "+=500", {
+  onChange: canvas.renderAll.bind(canvas),
+  onComplete: () => {},
+});
 ```
 
 ## Implementing infinite animation
@@ -88,13 +88,13 @@ Let's add a bit more functionality to animate to circle continuously left and ri
 
 ```jsx
 const animate = (canvas, circle, isLeftToRight = true) => {
-	circle.animate('left', isLeftToRight ? '+=500' : '-=500', {
-		onChange: canvas.renderAll.bind(canvas),
-		onComplete: () => {
-			animate(canvas, circle, !isLeftToRight)
-		}
-	})
-}
+  circle.animate("left", isLeftToRight ? "+=500" : "-=500", {
+    onChange: canvas.renderAll.bind(canvas),
+    onComplete: () => {
+      animate(canvas, circle, !isLeftToRight);
+    },
+  });
+};
 ```
 
 This will be the result after calling this function in your useEffect hook right after we add the circle to the canvas don't forget to pass the parameters of both canvas and circle in the animate function.
@@ -120,27 +120,27 @@ Now, Let's implement each step programmatically. I will create a new javascript 
 In the file, I will write down the following function to register a media stream, This captureStream method will start broadcasting a stream which will be passed to the Media Recorder to catch and and forward the next process. I have also defined another function `getSupportedMimeTypes` which I've explained below.
 
 ```javascript
-let mediaRecorder, recordedBlobs
+let mediaRecorder, recordedBlobs;
 
 function getSupportedMimeTypes() {
-	const possibleTypes = [
-		'video/webm;codecs=vp9,opus',
-		'video/webm;codecs=vp8,opus',
-		'video/webm;codecs=h264,opus',
-		'video/mp4;codecs=h264,aac'
-	]
-	//checks and return only supported types
-	return possibleTypes.filter((mimeType) => {
-		return MediaRecorder.isTypeSupported(mimeType)
-	})
+  const possibleTypes = [
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp8,opus",
+    "video/webm;codecs=h264,opus",
+    "video/mp4;codecs=h264,aac",
+  ];
+  //checks and return only supported types
+  return possibleTypes.filter((mimeType) => {
+    return MediaRecorder.isTypeSupported(mimeType);
+  });
 }
 
 export const startRecording = () => {
-	recordedBlobs = []
-	var mainCanvas = document.querySelector('#myCanvas')
-	//capture the stream at 30 frames per second
-	var stream = mainCanvas.captureStream(30)
-}
+  recordedBlobs = [];
+  var mainCanvas = document.querySelector("#myCanvas");
+  //capture the stream at 30 frames per second
+  var stream = mainCanvas.captureStream(30);
+};
 ```
 
 The function `getSupportedMimeTypes` will return a list of only supported mime types by the browser and I will pass one of the returned types in MediaRecorder options which I will declare in the second step Since a single mime type might not be supported in every browser but one of the following 4 types defined in the function will be supported in your browser Chrome, Safari, Microsoft Edge or Mozilla.
@@ -191,14 +191,14 @@ This function will be called from the react component to stop recording,
 
 ```javascript
 export function stopRecording() {
-	try {
-		//when this method is called, it will automatically call the onstop even defined above in the  event emits
-		mediaRecorder.stop()
-	} catch (error) {
-		console.error('Error while Stop recorder : ' + error)
-		return false
-	}
-	return true
+  try {
+    //when this method is called, it will automatically call the onstop even defined above in the  event emits
+    mediaRecorder.stop();
+  } catch (error) {
+    console.error("Error while Stop recorder : " + error);
+    return false;
+  }
+  return true;
 }
 ```
 
@@ -208,18 +208,18 @@ This is the function that converts the record blob array into the blob and downl
 
 ```javascript
 function downloadCanvas(recordedBlobs) {
-	var blob = new Blob(recordedBlobs, {
-		type: 'video/mp4'
-	})
+  var blob = new Blob(recordedBlobs, {
+    type: "video/mp4",
+  });
 
-	var url = URL.createObjectURL(blob)
-	var a = document.createElement('a')
-	document.body.appendChild(a)
-	a.style = 'display: none'
-	a.href = url
-	a.download = 'canvas_recording.mp4'
-	a.click()
-	window.URL.revokeObjectURL(url)
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  document.body.appendChild(a);
+  a.style = "display: none";
+  a.href = url;
+  a.download = "canvas_recording.mp4";
+  a.click();
+  window.URL.revokeObjectURL(url);
 }
 ```
 
@@ -228,29 +228,29 @@ function downloadCanvas(recordedBlobs) {
 This is the final and simple step, we have done everything. Now we just need to call the two events from the button component for start and stop recording, So We'll import `startRecording, stopRecording` and call inside the button component
 
 ```javascript
-import React, { useState } from 'react'
-import { stopRecording, startRecording } from './util/recording_utils'
+import React, { useState } from "react";
+import { stopRecording, startRecording } from "./util/recording_utils";
 
 const Canvas = () => {
-	const [isRecording, setRecording] = useState(false)
-	return (
-		<div>
-			<canvas id='myCanvas'></canvas>
-			<button
-				onClick={() => {
-					if (isRecording) {
-						startRecording()
-					} else {
-						saveRecording()
-					}
-					setRecording(!isRecording)
-				}}
-			>
-				{isRecording ? 'Stop Recording' : 'Start Recording'}
-			</button>
-		</div>
-	)
-}
+  const [isRecording, setRecording] = useState(false);
+  return (
+    <div>
+      <canvas id="myCanvas"></canvas>
+      <button
+        onClick={() => {
+          if (isRecording) {
+            startRecording();
+          } else {
+            saveRecording();
+          }
+          setRecording(!isRecording);
+        }}
+      >
+        {isRecording ? "Stop Recording" : "Start Recording"}
+      </button>
+    </div>
+  );
+};
 
-export default Canvas
+export default Canvas;
 ```

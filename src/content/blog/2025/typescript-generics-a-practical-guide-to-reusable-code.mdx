@@ -3,23 +3,20 @@ draft: false
 title: TypeScript Generics A Practical Guide to Reusable Code
 slug: typescript-generics-a-practical-guide-to-reusable-code
 heroImage: /src/assets/images/blog/2025/typescript-generics-a-practical-guide-to-reusable-code.png
-category: 'Web Development'
+category: "Web Development"
 description: Stop writing duplicate functions for different types. Learn how TypeScript generics help you write flexible, reusable, and type-safe code with practical, easy-to-follow examples.
-pubDate:  2025-09-01T21:48:27.048Z
+pubDate: 2025-09-01T21:48:27.048Z
 keywords:
-- typescript generics
-- generics in typescript
-- reusable code
-- type safety
-- typescript tutorial
+  - typescript generics
+  - generics in typescript
+  - reusable code
+  - type safety
+  - typescript tutorial
 tags:
-- typescript
-- web development
-- programming
-
+  - typescript
+  - web development
+  - programming
 ---
-
-# TypeScript Generics A Practical Guide to Reusable Code
 
 As a developer, you've probably faced this problem: you write a perfectly good function that works with numbers, but then you need the exact same logic for strings. Or arrays. So what do you do? You could copy and paste the function and change the types, but that leads to duplicate code. Or you could use the `any` type, but that throws away all the type safety that makes TypeScript great.
 
@@ -29,15 +26,18 @@ Generics are a core feature of TypeScript that lets you write functions, classes
 
 ## Why Are Generics So Useful?
 
-Before diving into the code, it’s important to understand *why* generics are worth learning. They offer three huge benefits.
+Before diving into the code, it’s important to understand _why_ generics are worth learning. They offer three huge benefits.
 
 ### 1. Write Reusable Code
+
 The most immediate benefit is code reuse. Instead of writing a separate function for every data type, you can write one generic function that works for all of them. This means less code to write, less code to test, and less code to maintain.
 
 ### 2. Enforce Type Safety
+
 Generics provide the flexibility of the `any` type without the risk. When you use `any`, you tell the TypeScript compiler to look the other way. With generics, you create a variable for types, so the compiler knows exactly what type you're working with at any given moment. This means you still get excellent autocompletion and error checking.
 
 ### 3. Create Flexible Components
+
 Generics allow you to build components that can adapt to different data types. This is incredibly powerful for creating libraries, data structures, or utility functions that need to work in a variety of situations.
 
 ## How Generics Work A Simple Example
@@ -65,6 +65,7 @@ function getFirstElement<T>(arr: T[]): T {
 ```
 
 Let's break that down:
+
 - `<T>` right after the function name declares `T` as our generic type variable.
 - `arr: T[]` means the function accepts an array where all elements are of type `T`.
 - `: T` at the end means the function will return a value of type `T`.

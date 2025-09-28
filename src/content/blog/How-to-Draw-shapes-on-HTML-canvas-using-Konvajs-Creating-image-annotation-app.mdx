@@ -1,7 +1,7 @@
 ---
 draft: false
 heroImage: /src/assets/images/2024/11/2024-11-19-html-canvas-image-annotation.png
-title: 'How to Draw shapes on HTML canvas using Konvajs: Creating image annotation app'
+title: "How to Draw shapes on HTML canvas using Konvajs: Creating image annotation app"
 category: Web Development
 description: Drawing shapes over the image to add comments on image objects
 pubDate: 2024-11-18T19:00:00.000Z
@@ -11,8 +11,6 @@ keywords:
   - image annotation functionality using konajs
   - draw shapes on html canvas using konva js
 ---
-
-## Overview
 
 In this post, I will write a code to draw shapes using the Konvajs library and create an application where users can draw different shapes such as rectangles, arrows, and dots on the specific parts of an image. Each shape will also have a comment that will be used to identify the objects in the image. Konvajs makes HTML canvas API easier than using natively. This article will help you to learn the use of konvajs API in HTML by drawing some shapes such as rectangles, arrows and adding konvajs events.
 
@@ -25,34 +23,34 @@ Create a basic html file with the following code. Add \<script src="[https://unp
 ```html
 <!doctype html>
 <html>
-	<head>
-		<script src="https://unpkg.com/konva@9.3.4/konva.min.js"></script>
-		<meta charset="utf-8" />
-		<title>Image Annotation</title>
-		<style>
-			#dialog {
-				z-index: 100;
-			}
-		</style>
-	</head>
-	<body>
-		<div id="container"></div>
-		<button onclick="activateDrawMode()">Add Rectangle</button>
-		<button onclick="activateArrowMode()">Add Arrow</button>
-		<button onclick="activatePointMode()">Add Point</button>
-		<button onclick="activateMoveMode()">Move (Pan)</button>
+  <head>
+    <script src="https://unpkg.com/konva@9.3.4/konva.min.js"></script>
+    <meta charset="utf-8" />
+    <title>Image Annotation</title>
+    <style>
+      #dialog {
+        z-index: 100;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <button onclick="activateDrawMode()">Add Rectangle</button>
+    <button onclick="activateArrowMode()">Add Arrow</button>
+    <button onclick="activatePointMode()">Add Point</button>
+    <button onclick="activateMoveMode()">Move (Pan)</button>
 
-		<dialog id="dialog">
-			<p>Enter Comment</p>
-			<input type="text" id="dialog-input" />
-			<form method="dialog">
-				<button>OK</button>
-			</form>
-		</dialog>
-	</body>
-	<script>
-		// konva js code
-	</script>
+    <dialog id="dialog">
+      <p>Enter Comment</p>
+      <input type="text" id="dialog-input" />
+      <form method="dialog">
+        <button>OK</button>
+      </form>
+    </dialog>
+  </body>
+  <script>
+    // konva js code
+  </script>
 </html>
 ```
 
@@ -65,16 +63,16 @@ Let's write some konvajs code in the \<script>\</script> tag to implement image 
 Create konva stage to with fixed width and height for the canvas area.
 
 ```javascript
-const width = 700
-const height = 500
+const width = 700;
+const height = 500;
 var stage = new Konva.Stage({
-	container: 'container',
-	width,
-	height
-})
+  container: "container",
+  width,
+  height,
+});
 
-var layer = new Konva.Layer()
-stage.add(layer)
+var layer = new Konva.Layer();
+stage.add(layer);
 ```
 
 ### Add background image
@@ -82,17 +80,18 @@ stage.add(layer)
 Add a background image for the Konva stage. The shapes will be drawn over the image to add comments on the objects inside the image.
 
 ```javascript
-var backgroundImage = new Image()
-backgroundImage.src = 'https://cdn.pixabay.com/photo/2016/02/17/15/37/laptop-1205256_1280.jpg' // URL of your background image
+var backgroundImage = new Image();
+backgroundImage.src =
+  "https://cdn.pixabay.com/photo/2016/02/17/15/37/laptop-1205256_1280.jpg"; // URL of your background image
 backgroundImage.onload = function () {
-	var background = new Konva.Image({
-		image: backgroundImage,
-		width,
-		height
-	})
-	layer.add(background)
-	layer.batchDraw()
-}
+  var background = new Konva.Image({
+    image: backgroundImage,
+    width,
+    height,
+  });
+  layer.add(background);
+  layer.batchDraw();
+};
 ```
 
 ### Define variables
@@ -106,11 +105,11 @@ These variables will hold different values while the konva stage is rendered.
 - canvasMode will store the current canvas modes of drawing such as free, rectangle, arrow, or point.
 
 ```javascript
-var isDrawing = false
-var currentShape = 1
-var rect, arrow, point
-var commentText
-var canvasMode = 'Free'
+var isDrawing = false;
+var currentShape = 1;
+var rect, arrow, point;
+var commentText;
+var canvasMode = "Free";
 ```
 
 ### Add button functions
@@ -119,30 +118,30 @@ These are the button click events that active the mode of canvas according to th
 
 ```javascript
 function activateDrawMode() {
-	// Enable rectangle drawing mode
-	clearObjects() // Reset the comment text object
-	canvasMode = 'Rect'
+  // Enable rectangle drawing mode
+  clearObjects(); // Reset the comment text object
+  canvasMode = "Rect";
 }
 
 function activateMoveMode() {
-	canvasMode = 'Move'
-	// Disable rectangle drawing mode
-	isDrawing = false
+  canvasMode = "Move";
+  // Disable rectangle drawing mode
+  isDrawing = false;
 }
 
 function activateArrowMode() {
-	clearObjects()
-	canvasMode = 'Arrow'
+  clearObjects();
+  canvasMode = "Arrow";
 }
 function activatePointMode() {
-	clearObjects()
-	canvasMode = 'Point'
+  clearObjects();
+  canvasMode = "Point";
 }
 function clearObjects() {
-	isDrawing = true
-	rect = null
-	commentText = null
-	arrow = null
+  isDrawing = true;
+  rect = null;
+  commentText = null;
+  arrow = null;
 }
 ```
 
@@ -152,54 +151,54 @@ These are the core Konva's functions to define the shapes by using the konva api
 
 ```javascript
 function addPoint(e) {
-	var touchPos = stage.getPointerPosition()
-	var circle = new Konva.Circle({
-		x: touchPos.x,
-		y: touchPos.y,
-		radius: 3,
-		fill: 'blue',
-		draggable: true
-	})
-	circle.setAttr('label', currentShape)
-	addLabel(currentShape, touchPos.x, touchPos.y - 10, 'new', 'blue')
-	layer.add(circle)
-	currentShape++
+  var touchPos = stage.getPointerPosition();
+  var circle = new Konva.Circle({
+    x: touchPos.x,
+    y: touchPos.y,
+    radius: 3,
+    fill: "blue",
+    draggable: true,
+  });
+  circle.setAttr("label", currentShape);
+  addLabel(currentShape, touchPos.x, touchPos.y - 10, "new", "blue");
+  layer.add(circle);
+  currentShape++;
 }
 function addArrow(e) {
-	arrow = new Konva.Arrow({
-		points: [0, 0, 0, 0], // Initialize with zero-length arrow
-		pointerLength: 20,
-		pointerWidth: 20,
-		fill: 'green',
-		stroke: 'green',
-		strokeWidth: 2,
-		draggable: true
-	})
-	var touchPos = stage.getPointerPosition()
-	arrow.points([touchPos.x, touchPos.y, touchPos.x, touchPos.y])
-	addLabel(currentShape, touchPos.x, touchPos.y - 10, 'new', 'green')
+  arrow = new Konva.Arrow({
+    points: [0, 0, 0, 0], // Initialize with zero-length arrow
+    pointerLength: 20,
+    pointerWidth: 20,
+    fill: "green",
+    stroke: "green",
+    strokeWidth: 2,
+    draggable: true,
+  });
+  var touchPos = stage.getPointerPosition();
+  arrow.points([touchPos.x, touchPos.y, touchPos.x, touchPos.y]);
+  addLabel(currentShape, touchPos.x, touchPos.y - 10, "new", "green");
 
-	arrow.setAttr('comment', 'comment')
-	arrow.setAttr('label', currentShape)
-	layer.add(arrow)
-	arrow.on('dblclick dbltap', (e) => showModel(e.target))
-	currentShape++
+  arrow.setAttr("comment", "comment");
+  arrow.setAttr("label", currentShape);
+  layer.add(arrow);
+  arrow.on("dblclick dbltap", (e) => showModel(e.target));
+  currentShape++;
 }
 function addReactangle(e) {
-	const pos = stage.getPointerPosition()
-	rect = new Konva.Rect({
-		x: pos.x,
-		y: pos.y,
-		stroke: 'red',
-		strokeWidth: 2,
-		draggable: true
-	})
-	rect.setAttr('comment', 'Comment')
-	rect.setAttr('label', currentShape)
-	addLabel(currentShape, pos.x, pos.y - 10, 'new', 'red')
-	layer.add(rect)
-	currentShape++
-	rect.on('dblclick dbltap', (e) => showModel(e.target))
+  const pos = stage.getPointerPosition();
+  rect = new Konva.Rect({
+    x: pos.x,
+    y: pos.y,
+    stroke: "red",
+    strokeWidth: 2,
+    draggable: true,
+  });
+  rect.setAttr("comment", "Comment");
+  rect.setAttr("label", currentShape);
+  addLabel(currentShape, pos.x, pos.y - 10, "new", "red");
+  layer.add(rect);
+  currentShape++;
+  rect.on("dblclick dbltap", (e) => showModel(e.target));
 }
 ```
 
@@ -208,50 +207,56 @@ function addReactangle(e) {
 The actual drawing functionality will be implemented by the following mouse events. When the events such as mousedown, dragmove, mousemove, mouseup events occurred. The Konva library will execute the drawing function for the shape according to the variable data being add for the currently active mode.
 
 ```javascript
-stage.on('mousedown', (e) => {
-	if (isDrawing) {
-		if (canvasMode == 'Rect') addReactangle(e)
-		else if (canvasMode == 'Arrow') addArrow(e)
-		else if (canvasMode == 'Point') addPoint(e)
+stage.on("mousedown", (e) => {
+  if (isDrawing) {
+    if (canvasMode == "Rect") addReactangle(e);
+    else if (canvasMode == "Arrow") addArrow(e);
+    else if (canvasMode == "Point") addPoint(e);
 
-		layer.draw()
-	}
-})
-stage.on('dragmove', (e) => {
-	const cn = e.target.className
-	var touchPos = stage.getPointerPosition()
-	if (e.target.getAttr('label')) {
-		if (cn == 'Arrow')
-			addLabel(
-				e.target.getAttr('label'),
-				e.target.points()[0] + e.target.x(),
-				e.target.points()[1] - 10 + e.target.y(),
-				'update'
-			)
-		else addLabel(e.target.getAttr('label'), e.target.x(), e.target.y() - 10, 'update')
-	}
-})
+    layer.draw();
+  }
+});
+stage.on("dragmove", (e) => {
+  const cn = e.target.className;
+  var touchPos = stage.getPointerPosition();
+  if (e.target.getAttr("label")) {
+    if (cn == "Arrow")
+      addLabel(
+        e.target.getAttr("label"),
+        e.target.points()[0] + e.target.x(),
+        e.target.points()[1] - 10 + e.target.y(),
+        "update",
+      );
+    else
+      addLabel(
+        e.target.getAttr("label"),
+        e.target.x(),
+        e.target.y() - 10,
+        "update",
+      );
+  }
+});
 
-stage.on('mousemove', (e) => {
-	const pos = stage.getPointerPosition()
-	if (isDrawing) {
-		if (canvasMode == 'Rect' && rect) {
-			rect.width(pos.x - rect.x())
-			rect.height(pos.y - rect.y())
-		} else if (canvasMode == 'Arrow' && arrow) {
-			arrow.points([arrow.points()[0], arrow.points()[1], pos.x, pos.y])
-		}
-		layer.batchDraw()
-	}
-})
+stage.on("mousemove", (e) => {
+  const pos = stage.getPointerPosition();
+  if (isDrawing) {
+    if (canvasMode == "Rect" && rect) {
+      rect.width(pos.x - rect.x());
+      rect.height(pos.y - rect.y());
+    } else if (canvasMode == "Arrow" && arrow) {
+      arrow.points([arrow.points()[0], arrow.points()[1], pos.x, pos.y]);
+    }
+    layer.batchDraw();
+  }
+});
 
-stage.on('mouseup', (e) => {
-	if (isDrawing) {
-		if (rect) showModel(rect)
-		else if (arrow) showModel(arrow)
-		isDrawing = false
-	}
-})
+stage.on("mouseup", (e) => {
+  if (isDrawing) {
+    if (rect) showModel(rect);
+    else if (arrow) showModel(arrow);
+    isDrawing = false;
+  }
+});
 ```
 
 ### Show comment model
@@ -260,44 +265,44 @@ When The drawing events i.e. mouseup event is called. We need to display a dialo
 
 ```javascript
 function showModel(object) {
-	var paragraph = document.createElement('p')
-	var dialog = document.createElement('dialog')
-	var btn = document.createElement('button')
-	var input = document.createElement('input')
-	input.value = object.getAttr('comment') ?? ''
-	paragraph.textContent = 'Comment'
-	btn.textContent = 'Ok'
+  var paragraph = document.createElement("p");
+  var dialog = document.createElement("dialog");
+  var btn = document.createElement("button");
+  var input = document.createElement("input");
+  input.value = object.getAttr("comment") ?? "";
+  paragraph.textContent = "Comment";
+  btn.textContent = "Ok";
 
-	dialog.appendChild(btn)
-	dialog.insertBefore(paragraph, dialog.firstChild)
-	dialog.insertBefore(input, paragraph.nextSibling)
+  dialog.appendChild(btn);
+  dialog.insertBefore(paragraph, dialog.firstChild);
+  dialog.insertBefore(input, paragraph.nextSibling);
 
-	btn.addEventListener('click', function () {
-		object.setAttr('comment', input.value)
-		document.body.removeChild(dialog)
-	})
-	document.body.appendChild(dialog)
-	dialog.showModal()
+  btn.addEventListener("click", function () {
+    object.setAttr("comment", input.value);
+    document.body.removeChild(dialog);
+  });
+  document.body.appendChild(dialog);
+  dialog.showModal();
 }
 
-function addLabel(label, left, top, type, color = 'red') {
-	var span = document.createElement('div')
-	if (type == 'update') {
-		var elm = document.querySelector('#label-' + label)
-		if (left && top) {
-			elm.style.left = left + 'px'
-			elm.style.top = top + 'px'
-		}
-		return
-	} else if (type == 'new') {
-		span.style.position = 'absolute'
-		span.style.left = left + 'px'
-		span.style.top = top + 'px'
-		span.style.color = color
-		span.id = 'label-' + label
-		span.innerHTML = label
-		document.body.appendChild(span)
-	}
+function addLabel(label, left, top, type, color = "red") {
+  var span = document.createElement("div");
+  if (type == "update") {
+    var elm = document.querySelector("#label-" + label);
+    if (left && top) {
+      elm.style.left = left + "px";
+      elm.style.top = top + "px";
+    }
+    return;
+  } else if (type == "new") {
+    span.style.position = "absolute";
+    span.style.left = left + "px";
+    span.style.top = top + "px";
+    span.style.color = color;
+    span.id = "label-" + label;
+    span.innerHTML = label;
+    document.body.appendChild(span);
+  }
 }
 ```
 
@@ -307,35 +312,35 @@ You can also edit the comments of each marked object on the image by adding a do
 
 ```javascript
 function doubleClickRect(object, points) {
-	var input = document.createElement('input')
-	input.type = 'text'
-	input.style.position = 'absolute'
+  var input = document.createElement("input");
+  input.type = "text";
+  input.style.position = "absolute";
 
-	input.style.left = `${points ? points.x : object.x()}px`
-	input.style.top = `${points ? points.y : object.y()}px`
-	input.value = object.getAttr('comment')
-	document.body.appendChild(input)
-	input.focus()
-	input.addEventListener('blur', () => {
-		object.setAttr('comment', input.value)
-		try {
-			// input.removeEventListener('blur')
-			document.body.removeChild(input)
-		} catch (error) {
-			console.log()
-		}
-		layer.draw()
-	})
+  input.style.left = `${points ? points.x : object.x()}px`;
+  input.style.top = `${points ? points.y : object.y()}px`;
+  input.value = object.getAttr("comment");
+  document.body.appendChild(input);
+  input.focus();
+  input.addEventListener("blur", () => {
+    object.setAttr("comment", input.value);
+    try {
+      // input.removeEventListener('blur')
+      document.body.removeChild(input);
+    } catch (error) {
+      console.log();
+    }
+    layer.draw();
+  });
 
-	input.addEventListener('keydown', (e) => {
-		if (e.key === 'Enter') {
-			layer.draw()
-			try {
-				document.body.removeChild(input)
-			} catch (error) {
-				console.log()
-			}
-		}
-	})
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      layer.draw();
+      try {
+        document.body.removeChild(input);
+      } catch (error) {
+        console.log();
+      }
+    }
+  });
 }
 ```

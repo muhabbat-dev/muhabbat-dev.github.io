@@ -5,25 +5,23 @@ slug: how-to-reduce-bundle-size-in-react-vue-or-angular
 heroImage: /src/assets/images/blog/2025/how-to-reduce-bundle-size-in-react-vue-or-angular.png
 category: Web Development
 description: A large JavaScript bundle can slow your app to a crawl. Learn practical, framework-specific strategies for React, Vue, and Angular to shrink your bundle size and boost performance.
-pubDate:  2025-09-23T16:32:25.051Z
+pubDate: 2025-09-23T16:32:25.051Z
 keywords:
-- bundle size
-- react performance
-- vue performance
-- angular performance
-- code splitting
-- tree shaking
-- lazy loading
+  - bundle size
+  - react performance
+  - vue performance
+  - angular performance
+  - code splitting
+  - tree shaking
+  - lazy loading
 tags:
-- javascript
-- react
-- vue
-- angular
-- performance
-- web development
+  - javascript
+  - react
+  - vue
+  - angular
+  - performance
+  - web development
 ---
-
-# How to reduce bundle size in React, Vue, or Angular
 
 We’ve all been there: you click a link, and then you wait. And wait. A slow-loading website is frustrating, and often, the culprit is a massive JavaScript bundle. The browser has to download, parse, and execute all that code before your user sees anything meaningful.
 
@@ -50,10 +48,10 @@ Imagine you're reading an encyclopedia. You wouldn't read it cover to cover; you
 React makes this straightforward with `React.lazy` and `Suspense`. You can wrap any component to load it dynamically.
 
 ```jsx
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy } from "react";
 
 // Lazily import the component
-const UserProfile = lazy(() => import('./components/UserProfile'));
+const UserProfile = lazy(() => import("./components/UserProfile"));
 
 function App() {
   return (
@@ -73,20 +71,20 @@ function App() {
 Vue uses dynamic `import()` syntax for lazy loading components, which is often used with the Vue Router.
 
 ```javascript
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
   {
-    path: '/dashboard',
-    name: 'Dashboard',
+    path: "/dashboard",
+    name: "Dashboard",
     // The component is only loaded when the user visits this route
-    component: () => import('@/views/DashboardView.vue')
-  }
+    component: () => import("@/views/DashboardView.vue"),
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
 });
 ```
 
@@ -95,22 +93,23 @@ const router = createRouter({
 Angular's router has built-in support for lazy loading entire modules. In your routing configuration, you use `loadChildren` to point to a module file.
 
 ```typescript
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
 
 const routes: Routes = [
   {
-    path: 'admin',
+    path: "admin",
     // The AdminModule is only loaded when the /admin path is visited
-    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
-  }
+    loadChildren: () =>
+      import("./admin/admin.module").then((m) => m.AdminModule),
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
 ```
 
 ## Enable Effective Tree Shaking
@@ -123,10 +122,10 @@ For example, when importing from a library, only import what you need.
 
 ```javascript
 // Good: This allows the bundler to ignore the rest of the library
-import { debounce } from 'lodash-es';
+import { debounce } from "lodash-es";
 
 // Bad: This forces the bundler to include the entire library
-import _ from 'lodash';
+import _ from "lodash";
 ```
 
 This principle applies equally to React, Vue, and Angular projects. Using component libraries that support direct imports (e.g., `import Button from 'library/Button'`) is also crucial.

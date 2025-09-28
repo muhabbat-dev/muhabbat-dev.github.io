@@ -3,7 +3,7 @@ draft: false
 heroImage: /src/assets/images/2024/11/2024-11-13-flutter-woocommerce-api-integration.png
 title: How to connect WooCommerce store with flutter application using rest api
 category: Mobile Development
-description: 'Connecting WooCommerce with application '
+description: "Connecting WooCommerce with application "
 pubDate: 2024-11-10T19:00:00.000Z
 tags:
   - advanced
@@ -14,8 +14,6 @@ keywords:
   - woocommerce api integration with flutter
   - connect woocommerce with flutter
 ---
-
-## Overview
 
 In this, We will set up our WooCommerce store with some mock products. Then we will create a small flutter application to list our WooCommerce products using rest api endpoints. We will also implement the cart functionalities in our flutter app.
 
@@ -34,14 +32,14 @@ We will install WordPress using docker and docker-compose file. Make sure you ha
 The easiest way to build and sync both MySQL and WordPress containers is by using the docker-compose file. Create a docker-compose.yml file in the root of your project with the below code and run `docker-compose up -d`
 
 ```yaml
-version: '3.1'
+version: "3.1"
 
 services:
   wordpress:
     image: wordpress
     restart: always
     ports:
-      - '8080:80'
+      - "8080:80"
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: woouser
@@ -59,7 +57,7 @@ services:
       MYSQL_DATABASE: woodb
       MYSQL_USER: woouser
       MYSQL_PASSWORD: woopassword
-      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
     volumes:
       - db:/var/lib/mysql
     networks:

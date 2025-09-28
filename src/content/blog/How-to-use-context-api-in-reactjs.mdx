@@ -12,8 +12,6 @@ keywords:
   - reactjs with context api implementation
 ---
 
-# Overview
-
 If you want to create an application you are required to use global state management. You will probably install redux and you have to write a lot of boilerplate code and overwhelming stuff for basic store implementation which is still fine but it will also increase the build size of your application because of installing external libraries like \*\*redux, react-redux, @ redux/toolkit \*\*, etc. React context API is already providing a great way to manage your state across all the components. In this tutorial, I'm using a very simple way to implement useContext API and useReducer hook to create a simple global state like a redux reducer.
 
 To start with:
@@ -33,25 +31,25 @@ Now,
 > the useReducer hook is used to define the reducers of peace of a state in your application. It also accepts two parameters, initial state, and reducer function within the body of useState hook and returns state and dispatch properties. Here is the example of using useReducer hook
 
 ```javascript
-const initialState = []
+const initialState = [];
 const reducer = (state, action) => {
-	switch (action.type) {
-		case 'ADD':
-			return [...state, action.payload]
-		case 'COMPLETE':
-			return state.map((todo) => {
-				if (todo.id === action.id) {
-					return { ...todo, isComplete: !todo.isComplete }
-				} else {
-					return todo
-				}
-			})
+  switch (action.type) {
+    case "ADD":
+      return [...state, action.payload];
+    case "COMPLETE":
+      return state.map((todo) => {
+        if (todo.id === action.id) {
+          return { ...todo, isComplete: !todo.isComplete };
+        } else {
+          return todo;
+        }
+      });
 
-		default:
-			return state
-	}
-}
-const [state, dispatch] = useReducer(initialState, reducer)
+    default:
+      return state;
+  }
+};
+const [state, dispatch] = useReducer(initialState, reducer);
 ```
 
 # Step-by-Step Implementation
@@ -61,22 +59,24 @@ Let's create a new react project by running `npx create-react-app react-context`
 Now, we have a blank project. create a new file under **src/context/todoContext.jsx**. I'm creating a React component with context implementation which will be used as the parent component of the application. I'm creating two contexts one for getting the state values and the other for setting the values i.e. reducer. Also add useReducer code which I've explained above
 
 ```javascript
-import React, { createContext, useReducer } from 'react'
+import React, { createContext, useReducer } from "react";
 
-export const TodoContext = createContext(null)
-export const TodoDispatchContext = createContext(null)
+export const TodoContext = createContext(null);
+export const TodoDispatchContext = createContext(null);
 
 const TodoProvider = ({ children }) => {
-	const [state, dispatch] = useReducer(initialState, reducer)
+  const [state, dispatch] = useReducer(initialState, reducer);
 
-	return (
-		<TodoContext.Provider value={state}>
-			<TodoDispatchContext.Provider value={dispatch}>{children}</TodoDispatchContext.Provider>
-		</TodoContext.Provider>
-	)
-}
+  return (
+    <TodoContext.Provider value={state}>
+      <TodoDispatchContext.Provider value={dispatch}>
+        {children}
+      </TodoDispatchContext.Provider>
+    </TodoContext.Provider>
+  );
+};
 
-export default TodoProvider
+export default TodoProvider;
 ```
 
 Now!
@@ -84,19 +84,19 @@ Now!
 We have created the todo context. We import this component in our main entry file entry and wrap around the whole application
 
 ```javascript
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import TodoProvider from './context/todoProvider'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import TodoProvider from "./context/todoProvider";
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-	<React.StrictMode>
-		<TodoProvider>
-			<Todo />
-		</TodoProvider>
-	</React.StrictMode>
-)
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <TodoProvider>
+      <Todo />
+    </TodoProvider>
+  </React.StrictMode>,
+);
 ```
 
 Alright!
@@ -106,71 +106,77 @@ We have successfully created and wrapped our todo context in our application. No
 **src/components/todo.jsx**
 
 ```javascript
-import React, { useContext } from 'react'
-import { TodoContext, TodoDispatchContext } from '../context/todoContext'
+import React, { useContext } from "react";
+import { TodoContext, TodoDispatchContext } from "../context/todoContext";
 
 const Todos = () => {
-	const todos = useContext(TodoContext)
-	const dispatch = useContext(TodoDispatchContext)
-	return (
-		<div>
-			{todos.map((todo) => (
-				<div>
-					<h2>{todo.text}</h2>
-				</div>
-			))}
-		</div>
-	)
-}
+  const todos = useContext(TodoContext);
+  const dispatch = useContext(TodoDispatchContext);
+  return (
+    <div>
+      {todos.map((todo) => (
+        <div>
+          <h2>{todo.text}</h2>
+        </div>
+      ))}
+    </div>
+  );
+};
 
-export default Todos
+export default Todos;
 ```
 
 Finally, Let's write some UI code to utilize the workflow of the state management.
 
 ```javascript
-import React, { useContext } from 'react'
-import { TodoContext, TodoDispatchContext } from '../context/todoContext'
+import React, { useContext } from "react";
+import { TodoContext, TodoDispatchContext } from "../context/todoContext";
 
 const Todos = () => {
-	const todos = useContext(TodoContext)
-	const dispatch = useContext(TodoDispatchContext)
-	return (
-		<div>
-			{todos.map((todo) => (
-				<div className='todo-body'>
-					<span className={todo.isCompleted ? 'todo-completed' : 'to-uncompleted'}>
-						{todo.text}
-					</span>
-					<input
-						type={'checkbox'}
-						value={todo.isCompleted}
-						onChange={(e) => dispatch({ type: 'COMPLETE', id: todo.id })}
-					/>
-				</div>
-			))}
-			<div className='add-todo'>
-				<input type={'text'} value={todoText} onChange={(e) => setTodoText(e.target.value)} />
-				<button
-					className='add-btn'
-					onClick={() => {
-						dispatch({
-							type: 'ADD',
-							payload: {
-								text: todoText,
-								id: Date.now() //This returns timestamp as a unique number and I'm using this as id
-							}
-						})
-					}}
-				>
-					Add TODO
-				</button>
-			</div>
-		</div>
-	)
-}
+  const todos = useContext(TodoContext);
+  const dispatch = useContext(TodoDispatchContext);
+  return (
+    <div>
+      {todos.map((todo) => (
+        <div className="todo-body">
+          <span
+            className={todo.isCompleted ? "todo-completed" : "to-uncompleted"}
+          >
+            {todo.text}
+          </span>
+          <input
+            type={"checkbox"}
+            value={todo.isCompleted}
+            onChange={(e) => dispatch({ type: "COMPLETE", id: todo.id })}
+          />
+        </div>
+      ))}
+      <div className="add-todo">
+        <input
+          type={"text"}
+          value={todoText}
+          onChange={(e) => setTodoText(e.target.value)}
+        />
+        <button
+          className="add-btn"
+          onClick={() => {
+            dispatch({
+              type: "ADD",
+              payload: {
+                text: todoText,
+                id: Date.now(), //This returns timestamp as a unique number and I'm using this as id
+              },
+            });
+          }}
+        >
+          Add TODO
+        </button>
+      </div>
+    </div>
+  );
+};
 
-export default Todos
+export default Todos;
 ```
 
 ## Conclusion

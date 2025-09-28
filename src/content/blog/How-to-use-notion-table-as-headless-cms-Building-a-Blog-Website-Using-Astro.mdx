@@ -1,7 +1,7 @@
 ---
 draft: false
 heroImage: /src/assets/images/2024/11/2024-11-20-astro-notion-blogs-cms.png
-title: 'How to use notion table as headless cms: Building a blog website using Astro'
+title: "How to use notion table as headless cms: Building a blog website using Astro"
 category: Web Development
 description: Notion CMS for blog website
 pubDate: 2024-11-19T19:00:00.000Z
@@ -12,8 +12,6 @@ keywords:
   - Creating a blog website using notion database as a cms
   - Using Notion as a headless CMS
 ---
-
-## Overview
 
 Notion is a great tool for managing a lot of things. You can use the notion to organize your life easily. Do know you can also use notion as a CMS for your website? In this article, I will walk you through the step-by-step guide to creating a blog website using notion database as a headless CMS and Astro as a static site generator to fetch data from the notion database and create a basic static website to display your blogs.
 
@@ -44,34 +42,36 @@ Create a new Astro project by running `yarn create astro notion-blog`. Make sure
 Create a new file under `src/utils/notion_client.js` and add the following config function
 
 ```javascript
-import { Client } from '@notionhq/client'
-import { parseBlocksToHTML } from './block_parser'
-const notion = new Client({ auth: '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' })
-const databaseId = '1447b31380d180779aa2c01386ca83cc'
+import { Client } from "@notionhq/client";
+import { parseBlocksToHTML } from "./block_parser";
+const notion = new Client({
+  auth: "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",
+});
+const databaseId = "1447b31380d180779aa2c01386ca83cc";
 
 //get pages data from blog database
 export async function getBlogs() {
-	const response = await notion.databases.query({
-		database_id: databaseId
-	})
+  const response = await notion.databases.query({
+    database_id: databaseId,
+  });
 
-	return response.results
+  return response.results;
 }
 
 //get page properties name, fearured image, tags
 export async function getPageProperties(page_id) {
-	const response = await notion.pages.retrieve({ page_id })
+  const response = await notion.pages.retrieve({ page_id });
 
-	return response.properties
+  return response.properties;
 }
 //retrieve notion blocks from page and parse into html
 export async function getNotionBlocksByPage(blockId) {
-	const response = await notion.blocks.children.list({
-		block_id: blockId,
-		page_size: 50
-	})
-	const html = parseBlocksToHTML(response.results)
-	return html
+  const response = await notion.blocks.children.list({
+    block_id: blockId,
+    page_size: 50,
+  });
+  const html = parseBlocksToHTML(response.results);
+  return html;
 }
 ```
 
@@ -83,32 +83,32 @@ Create `src/utils/block_parser.js` and add the following function.
 
 ```javascript
 function parseBlock(block) {
-	const { type } = block
+  const { type } = block;
 
-	switch (type) {
-		case 'paragraph':
-			return parseParagraph(block)
-		case 'heading_1':
-		case 'heading_2':
-		case 'heading_3':
-			return parseHeading(block, type)
-		case 'bulleted_list_item':
-			return `<li>${parseRichText(block.bulleted_list_item.rich_text)}</li>`
-		case 'numbered_list_item':
-			return `<li>${parseRichText(block.numbered_list_item.rich_text)}</li>`
-		case 'quote':
-			return `<blockquote>${parseRichText(block.quote.rich_text)}</blockquote>`
-		case 'code':
-			return `<pre><code>${block.code.text[0]?.rich_text?.content || ''}</code></pre>`
-		case 'image':
-			return parseImage(block)
-		case 'divider':
-			return '<hr />'
-		case 'callout':
-			return `<div class="callout">${parseRichText(block.callout.rich_text)}</div>`
-		default:
-			return ''
-	}
+  switch (type) {
+    case "paragraph":
+      return parseParagraph(block);
+    case "heading_1":
+    case "heading_2":
+    case "heading_3":
+      return parseHeading(block, type);
+    case "bulleted_list_item":
+      return `<li>${parseRichText(block.bulleted_list_item.rich_text)}</li>`;
+    case "numbered_list_item":
+      return `<li>${parseRichText(block.numbered_list_item.rich_text)}</li>`;
+    case "quote":
+      return `<blockquote>${parseRichText(block.quote.rich_text)}</blockquote>`;
+    case "code":
+      return `<pre><code>${block.code.text[0]?.rich_text?.content || ""}</code></pre>`;
+    case "image":
+      return parseImage(block);
+    case "divider":
+      return "<hr />";
+    case "callout":
+      return `<div class="callout">${parseRichText(block.callout.rich_text)}</div>`;
+    default:
+      return "";
+  }
 }
 ```
 
@@ -116,41 +116,46 @@ This function accepts the block object obtained from the Notion page API respons
 
 ```javascript
 function parseParagraph(block) {
-	return `<p>${parseRichText(block.paragraph.rich_text)}</p>`
+  return `<p>${parseRichText(block.paragraph.rich_text)}</p>`;
 }
 
 function parseHeading(block, type) {
-	const level = type === 'heading_1' ? 1 : type === 'heading_2' ? 2 : 3
-	return `<h${level}>${parseRichText(block[type].rich_text)}</h${level}>`
+  const level = type === "heading_1" ? 1 : type === "heading_2" ? 2 : 3;
+  return `<h${level}>${parseRichText(block[type].rich_text)}</h${level}>`;
 }
 
 function parseImage(block) {
-	const imageUrl = block.image.type === 'external' ? block.image.external.url : block.image.file.url
-	const altText = block.image.caption?.[0]?.plain_text || ''
-	return `<img src="${imageUrl}" alt="${altText}" />`
+  const imageUrl =
+    block.image.type === "external"
+      ? block.image.external.url
+      : block.image.file.url;
+  const altText = block.image.caption?.[0]?.plain_text || "";
+  return `<img src="${imageUrl}" alt="${altText}" />`;
 }
 
 function parseRichText(richTextArray) {
-	if (!richTextArray) {
-		return
-	}
-	return richTextArray
-		.map((text) => {
-			const content = text.text.content
-			const link = text.text.link ? `<a href="${text.text.link.url}">${content}</a>` : content
+  if (!richTextArray) {
+    return;
+  }
+  return richTextArray
+    .map((text) => {
+      const content = text.text.content;
+      const link = text.text.link
+        ? `<a href="${text.text.link.url}">${content}</a>`
+        : content;
 
-			const formatted = applyAnnotations(link, text.annotations)
-			return formatted
-		})
-		.join('')
+      const formatted = applyAnnotations(link, text.annotations);
+      return formatted;
+    })
+    .join("");
 }
 
 function applyAnnotations(content, annotations) {
-	if (annotations.bold) content = `<b>${content}</b>`
-	if (annotations.italic) content = `<i>${content}</i>`
-	if (annotations.underline) content = `<u>${content}</u>`
-	if (annotations.code) content = `<code>${content}</code>`
-	return content
+  if (annotations.bold) content = `<b>${content}</b>`;
+  if (annotations.italic) content = `<i>${content}</i>`;
+  if (annotations.underline) content = `<u>${content}</u>`;
+  if (annotations.code) content = `<code>${content}</code>`;
+  return content;
 }
 ```
 
@@ -158,29 +163,33 @@ Finally, We will create a function to all the blocks by looping through each blo
 
 ```javascript
 export function parseBlocksToHTML(blocks) {
-	let html = ''
-	let listType = null
-	let listItems = []
+  let html = "";
+  let listType = null;
+  let listItems = [];
 
-	for (const block of blocks) {
-		if (block.type === 'bulleted_list_item' || block.type === 'numbered_list_item') {
-			if (!listType) listType = block.type === 'bulleted_list_item' ? 'ul' : 'ol'
-			listItems.push(parseBlock(block))
-		} else {
-			if (listType) {
-				html += `<${listType}>${listItems.join('')}</${listType}>`
-				listType = null
-				listItems = []
-			}
-			html += parseBlock(block)
-		}
-	}
+  for (const block of blocks) {
+    if (
+      block.type === "bulleted_list_item" ||
+      block.type === "numbered_list_item"
+    ) {
+      if (!listType)
+        listType = block.type === "bulleted_list_item" ? "ul" : "ol";
+      listItems.push(parseBlock(block));
+    } else {
+      if (listType) {
+        html += `<${listType}>${listItems.join("")}</${listType}>`;
+        listType = null;
+        listItems = [];
+      }
+      html += parseBlock(block);
+    }
+  }
 
-	if (listType) {
-		html += `<${listType}>${listItems.join('')}</${listType}>`
-	}
+  if (listType) {
+    html += `<${listType}>${listItems.join("")}</${listType}>`;
+  }
 
-	return html
+  return html;
 }
 ```
 
@@ -190,34 +199,35 @@ We also need a property parser function to extract the values from page properti
 
 ```javascript
 export function parsePageProperties(properties) {
-	return {
-		featuredImage: parseFileProperty(properties.FeaturedImage),
-		name: parseNameProperty(properties.Name),
-		draft: parseCheckboxProperty(properties.Draft),
-		tags: parseMultiSelectProperty(properties.Tags)
-	}
+  return {
+    featuredImage: parseFileProperty(properties.FeaturedImage),
+    name: parseNameProperty(properties.Name),
+    draft: parseCheckboxProperty(properties.Draft),
+    tags: parseMultiSelectProperty(properties.Tags),
+  };
 }
 
 function parseFileProperty(fileProperty) {
-	if (!fileProperty || !fileProperty.files || fileProperty.files.length === 0) return null
+  if (!fileProperty || !fileProperty.files || fileProperty.files.length === 0)
+    return null;
 
-	const file = fileProperty.files[0]
-	return file.type === 'external' ? file.external.url : file.file.url
+  const file = fileProperty.files[0];
+  return file.type === "external" ? file.external.url : file.file.url;
 }
 
 function parseNameProperty(textProperty) {
-	if (!textProperty) return null
-	return textProperty.title[0].text.content
+  if (!textProperty) return null;
+  return textProperty.title[0].text.content;
 }
 
 function parseCheckboxProperty(checkboxProperty) {
-	return checkboxProperty?.checkbox || false
+  return checkboxProperty?.checkbox || false;
 }
 
 function parseMultiSelectProperty(multiSelectProperty) {
-	if (!multiSelectProperty || !multiSelectProperty.multi_select) return []
+  if (!multiSelectProperty || !multiSelectProperty.multi_select) return [];
 
-	return multiSelectProperty.multi_select.map((item) => item.name)
+  return multiSelectProperty.multi_select.map((item) => item.name);
 }
 ```
 
@@ -286,9 +296,9 @@ const { name, featuredImage } = parsePageProperties(pageProperties)
 ---
 
 <Layout>
-	<img class="w-full h-80 image-cover" src="{featuredImage}" />
-	<h1 class="text-2xl font-bold text-center">{name}</h1>
-	<div class="prose prose-md mt-10" set:html="{blogBody}"></div>
+  <img class="w-full h-80 image-cover" src="{featuredImage}" />
+  <h1 class="text-2xl font-bold text-center">{name}</h1>
+  <div class="prose prose-md mt-10" set:html="{blogBody}"></div>
 </Layout>
 ```
 

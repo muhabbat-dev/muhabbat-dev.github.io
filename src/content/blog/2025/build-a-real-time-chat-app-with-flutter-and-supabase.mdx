@@ -5,7 +5,7 @@ slug: build-a-real-time-chat-app-with-flutter-and-supabase
 heroImage: /src/assets/images/blog/2025/build-a-real-time-chat-app-with-flutter-and-supabase.png
 category: Mobile Development
 description: Learn how to build a fully functional, real-time chat application from scratch using Flutter for the UI and Supabase for the backend. This step-by-step guide covers authentication, real-time messaging, and database setup.
-pubDate:  2025-09-17T21:17:18.875Z
+pubDate: 2025-09-17T21:17:18.875Z
 keywords:
   - flutter chat app
   - supabase real time
@@ -17,8 +17,6 @@ tags:
   - flutter
   - supabase
 ---
-
-# Build a Real Time Chat App with Flutter and Supabase
 
 Real-time chat is a core feature in many modern applications, from social media to customer support. Building one from scratch can seem complex, but with the right tools, it’s more accessible than you think. In this tutorial, we’ll build a complete chat application using Flutter for the cross-platform frontend and Supabase for a powerful, scalable backend.
 
@@ -47,10 +45,10 @@ Next, we need a table to store our chat messages.
 3.  Name the table `messages`.
 4.  Disable **Row Level Security (RLS)** for now to make development easier. We can enable it later for production.
 5.  Add the following columns:
-    *   `id`: `int8` (primary key, generated automatically).
-    *   `created_at`: `timestamptz` (default value `now()`).
-    *   `content`: `text`.
-    *   `user_id`: `uuid` (to link messages to users, assuming you use Supabase Auth).
+    - `id`: `int8` (primary key, generated automatically).
+    - `created_at`: `timestamptz` (default value `now()`).
+    - `content`: `text`.
+    - `user_id`: `uuid` (to link messages to users, assuming you use Supabase Auth).
 
 ### 3. Enable Realtime
 
@@ -85,7 +83,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required for async main
-  
+
   await Supabase.initialize(
     url: 'YOUR_SUPABASE_URL',
     anonKey: 'YOUR_SUPABASE_ANON_KEY',
@@ -140,7 +138,7 @@ class _ChatPageState extends State<ChatPage> {
       return;
     }
     _textController.clear();
-    
+
     // For this example, we assume a user is signed in.
     // Replace with your actual user management logic.
     final userId = Supabase.instance.client.auth.currentUser?.id;
@@ -235,9 +233,9 @@ final _messagesStream = Supabase.instance.client
     .stream(primaryKey: ['id']).order('created_at');
 ```
 
--   **`Supabase.instance.client.from('messages')`**: This targets our `messages` table in the Supabase database.
--   **`.stream(primaryKey: ['id'])`**: This is the magic function. It creates a WebSocket connection to Supabase and listens for any changes (inserts, updates, deletes) in the `messages` table. The `primaryKey` is required for Supabase to efficiently track changes.
--   **`.order('created_at')`**: We sort the messages by their creation timestamp to ensure they are displayed in the correct order.
+- **`Supabase.instance.client.from('messages')`**: This targets our `messages` table in the Supabase database.
+- **`.stream(primaryKey: ['id'])`**: This is the magic function. It creates a WebSocket connection to Supabase and listens for any changes (inserts, updates, deletes) in the `messages` table. The `primaryKey` is required for Supabase to efficiently track changes.
+- **`.order('created_at')`**: We sort the messages by their creation timestamp to ensure they are displayed in the correct order.
 
 #### The `StreamBuilder` Widget
 
@@ -252,10 +250,10 @@ StreamBuilder<List<Map<String, dynamic>>>(
 )
 ```
 
--   **`stream`**: We pass our `_messagesStream` here.
--   **`builder`**: This function is called every time a new event arrives on the stream. The `snapshot` object contains the latest data.
--   **State Handling**: We check `snapshot.hasData` to see if we have messages. If not, we show a loading indicator. If there's an error, we display it.
--   **Displaying Data**: When data is available (`snapshot.data!`), we use a `ListView.builder` to efficiently render the list of messages.
+- **`stream`**: We pass our `_messagesStream` here.
+- **`builder`**: This function is called every time a new event arrives on the stream. The `snapshot` object contains the latest data.
+- **State Handling**: We check `snapshot.hasData` to see if we have messages. If not, we show a loading indicator. If there's an error, we display it.
+- **Displaying Data**: When data is available (`snapshot.data!`), we use a `ListView.builder` to efficiently render the list of messages.
 
 #### Sending a Message
 
@@ -280,10 +278,10 @@ Future<void> _sendMessage() async {
 }
 ```
 
--   We get the text from our `_textController`.
--   We perform a database **insert** operation on the `messages` table.
--   Once the new row is inserted, Supabase's Realtime feature automatically detects this change and broadcasts it to all connected clients.
--   Our `StreamBuilder` receives the new data and instantly rebuilds the UI to show the new message. No manual state management (`setState`) is needed for the message list!
+- We get the text from our `_textController`.
+- We perform a database **insert** operation on the `messages` table.
+- Once the new row is inserted, Supabase's Realtime feature automatically detects this change and broadcasts it to all connected clients.
+- Our `StreamBuilder` receives the new data and instantly rebuilds the UI to show the new message. No manual state management (`setState`) is needed for the message list!
 
 ## Conclusion
 

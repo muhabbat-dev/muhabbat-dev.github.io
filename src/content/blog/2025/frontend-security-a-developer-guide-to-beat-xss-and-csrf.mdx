@@ -5,20 +5,18 @@ slug: frontend-security-a-developer-guide-to-beat-xss-and-csrf
 heroImage: /src/assets/images/blog/2025/frontend-security-a-developer-guide-to-beat-xss-and-csrf.png
 category: Web Development
 description: Learn how to protect your web applications from common threats. This developer guide breaks down XSS and CSRF attacks with practical, easy-to-follow prevention strategies.
-pubDate:  2025-09-22T21:26:20.371Z
+pubDate: 2025-09-22T21:26:20.371Z
 keywords:
-- frontend security
-- XSS
-- CSRF
-- web security
-- javascript security
+  - frontend security
+  - XSS
+  - CSRF
+  - web security
+  - javascript security
 tags:
-- security
-- javascript
-- web development
+  - security
+  - javascript
+  - web development
 ---
-
-# Frontend Security A Developer Guide To Beat XSS And CSRF
 
 You’ve just shipped a beautiful, responsive frontend. The UI is pixel-perfect, and the user experience is smooth. But have you thought about what’s happening under the hood? As frontend developers, we often think of security as a backend problem. The truth is, some of the most common web vulnerabilities, like Cross-Site Scripting (XSS) and Cross-Site Request Forgery (CSRF), start right in the browser.
 
@@ -38,8 +36,8 @@ Protecting your application from XSS comes down to a simple rule: **never trust 
 
 The most effective defense is a two-step process.
 
-*   **Input Sanitization:** Before you even store user input, clean it. Remove any potentially dangerous HTML, script tags, or event handlers (`onclick`, `onerror`). Use trusted libraries like `DOMPurify` to do this safely.
-*   **Output Encoding:** When you display data back to the user, encode it. This process converts special characters like `<` and `>` into their HTML entity equivalents (`&lt;` and `&gt;`). The browser will display these characters as text instead of executing them as code. Modern frameworks like React and Vue do this automatically for most content, but you need to be careful when using features like `dangerouslySetInnerHTML`.
+- **Input Sanitization:** Before you even store user input, clean it. Remove any potentially dangerous HTML, script tags, or event handlers (`onclick`, `onerror`). Use trusted libraries like `DOMPurify` to do this safely.
+- **Output Encoding:** When you display data back to the user, encode it. This process converts special characters like `<` and `>` into their HTML entity equivalents (`&lt;` and `&gt;`). The browser will display these characters as text instead of executing them as code. Modern frameworks like React and Vue do this automatically for most content, but you need to be careful when using features like `dangerouslySetInnerHTML`.
 
 #### 2. Implement a Content Security Policy (CSP)
 
@@ -58,6 +56,7 @@ CSRF prevention focuses on making sure every request was intentionally made by t
 #### 1. Use Anti-CSRF Tokens
 
 This is the classic defense. Here’s how it works:
+
 1.  When a user loads a page with a form, the server generates a unique, secret token and embeds it in the form.
 2.  When the user submits the form, that token is sent back to the server.
 3.  The server checks if the submitted token matches the one it generated for that user's session.
@@ -68,19 +67,19 @@ An attacker can’t guess this token, so any forged request they create will be 
 
 A more modern and highly effective defense is the `SameSite` cookie attribute. This attribute tells the browser whether to send cookies with cross-site requests. It has two key settings:
 
-*   `SameSite=Strict`: The browser will not send the cookie for any cross-site requests at all. This is the most secure option but can sometimes break legitimate functionality, like links from external sites.
-*   `SameSite=Lax`: This is the default in most modern browsers. Cookies are sent with top-level navigation (e.g., clicking a link) but not with requests initiated by third-party sites (like those made via forms or scripts). This provides a great balance of security and usability.
+- `SameSite=Strict`: The browser will not send the cookie for any cross-site requests at all. This is the most secure option but can sometimes break legitimate functionality, like links from external sites.
+- `SameSite=Lax`: This is the default in most modern browsers. Cookies are sent with top-level navigation (e.g., clicking a link) but not with requests initiated by third-party sites (like those made via forms or scripts). This provides a great balance of security and usability.
 
 ## Your Frontend Security Checklist
 
 Security isn't a one-and-done task. It's a mindset. Here’s a quick checklist to help you build safer frontends:
 
-*   **Always sanitize user input** before storing it.
-*   **Always encode dynamic content** before rendering it in the UI.
-*   Leverage the built-in security features of your framework (e.g., React's JSX encoding).
-*   Implement a strong **Content Security Policy (CSP)**.
-*   Protect all state-changing actions (forms, API calls) with **Anti-CSRF tokens**.
-*   Set the **`SameSite=Lax` or `SameSite=Strict`** attribute on your session cookies.
-*   Keep your libraries and frameworks **up to date** to patch known vulnerabilities.
+- **Always sanitize user input** before storing it.
+- **Always encode dynamic content** before rendering it in the UI.
+- Leverage the built-in security features of your framework (e.g., React's JSX encoding).
+- Implement a strong **Content Security Policy (CSP)**.
+- Protect all state-changing actions (forms, API calls) with **Anti-CSRF tokens**.
+- Set the **`SameSite=Lax` or `SameSite=Strict`** attribute on your session cookies.
+- Keep your libraries and frameworks **up to date** to patch known vulnerabilities.
 
 By integrating these practices into your workflow, you can move from just building features to building resilient, trustworthy applications. Security is a team sport, and as a frontend developer, you are on the front line of defense. Build secure, build smart.

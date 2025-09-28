@@ -15,7 +15,7 @@ type Props = {
   slug: string;
 };
 
-const { data, readTime, slug } = Astro.props;
+const { data, readTime } = Astro.props;
 const { title, description, pubDate, heroImage, tags } = data;
 ---
 
@@ -24,7 +24,7 @@ const { title, description, pubDate, heroImage, tags } = data;
   meta={[
     {
       name: "description",
-      content: "muhabbat.dev is my personal portfolio and blog website.",
+      content: data.description,
     },
     {
       name: "keywords",
@@ -33,11 +33,10 @@ const { title, description, pubDate, heroImage, tags } = data;
     },
   ]}
   ogMeta={[
-    { property: "og:title", content: "Muhabbat Dev | Blog" },
+    { property: "og:title", content: data.title },
     {
       property: "og:description",
-      content:
-        " I'm a Full Stack Web and Mobile Developer from France. I'm passionate about building new products and learning new technology",
+      content: data.description,
     },
     { property: "og:type", content: "website" },
     {
@@ -45,7 +44,7 @@ const { title, description, pubDate, heroImage, tags } = data;
       content:
         "https://muhabbat-dev.github.io/public/assets/images/profile5.png",
     },
-    { property: "og:url", content: "https://muhabbat.dev" },
+    { property: "og:url", content: Astro.url.toString() },
   ]}
   headCard={{
     headline: title,

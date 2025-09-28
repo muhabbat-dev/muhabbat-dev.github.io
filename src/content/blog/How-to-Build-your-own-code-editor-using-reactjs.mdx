@@ -69,23 +69,23 @@ Let’s add the code now
 Create a component CodeEditor
 
 ```javascript
-import ReactCodeMirror from '@uiw/react-codemirror'
-import { javascript } from '@codemirror/lang-javascript'
+import ReactCodeMirror from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
 
 function CodeEditor() {
-	return (
-		<div className='editor'>
-			<h1>Code editor</h1>
-			<ReactCodeMirror
-				value={"console.log('Hello');"}
-				height='200px'
-				extensions={[javascript({ jsx: true })]}
-			/>
-		</div>
-	)
+  return (
+    <div className="editor">
+      <h1>Code editor</h1>
+      <ReactCodeMirror
+        value={"console.log('Hello');"}
+        height="200px"
+        extensions={[javascript({ jsx: true })]}
+      />
+    </div>
+  );
 }
 
-export default CodeEditor
+export default CodeEditor;
 ```
 
 The value prop is the code string that you want to display on the editor
@@ -121,38 +121,38 @@ yarn add @uiw/codemirror-themes @lezer/highlight
 Create a theme.js file
 
 ```javascript
-import { createTheme } from '@uiw/codemirror-themes'
-import { tags as t } from '@lezer/highlight'
+import { createTheme } from "@uiw/codemirror-themes";
+import { tags as t } from "@lezer/highlight";
 
 export const myTheme = createTheme({
-	theme: 'light',
-	settings: {
-		background: '#ffffff',
-		foreground: '#75baff',
-		caret: '#5d00ff',
-		selection: '#036dd626',
-		selectionMatch: '#036dd626',
-		lineHighlight: '#8a91991a',
-		gutterBackground: '#fff',
-		gutterForeground: '#8a919966'
-	},
-	styles: [
-		{ tag: t.comment, color: '#787b8099' },
-		{ tag: t.variableName, color: '#0080ff' },
-		{ tag: [t.string, t.special(t.brace)], color: '#5c6166' },
-		{ tag: t.number, color: '#5c6166' },
-		{ tag: t.bool, color: '#5c6166' },
-		{ tag: t.null, color: '#5c6166' },
-		{ tag: t.keyword, color: '#5c6166' },
-		{ tag: t.operator, color: '#5c6166' },
-		{ tag: t.className, color: '#5c6166' },
-		{ tag: t.definition(t.typeName), color: '#5c6166' },
-		{ tag: t.typeName, color: '#5c6166' },
-		{ tag: t.angleBracket, color: '#5c6166' },
-		{ tag: t.tagName, color: '#5c6166' },
-		{ tag: t.attributeName, color: '#5c6166' }
-	]
-})
+  theme: "light",
+  settings: {
+    background: "#ffffff",
+    foreground: "#75baff",
+    caret: "#5d00ff",
+    selection: "#036dd626",
+    selectionMatch: "#036dd626",
+    lineHighlight: "#8a91991a",
+    gutterBackground: "#fff",
+    gutterForeground: "#8a919966",
+  },
+  styles: [
+    { tag: t.comment, color: "#787b8099" },
+    { tag: t.variableName, color: "#0080ff" },
+    { tag: [t.string, t.special(t.brace)], color: "#5c6166" },
+    { tag: t.number, color: "#5c6166" },
+    { tag: t.bool, color: "#5c6166" },
+    { tag: t.null, color: "#5c6166" },
+    { tag: t.keyword, color: "#5c6166" },
+    { tag: t.operator, color: "#5c6166" },
+    { tag: t.className, color: "#5c6166" },
+    { tag: t.definition(t.typeName), color: "#5c6166" },
+    { tag: t.typeName, color: "#5c6166" },
+    { tag: t.angleBracket, color: "#5c6166" },
+    { tag: t.tagName, color: "#5c6166" },
+    { tag: t.attributeName, color: "#5c6166" },
+  ],
+});
 ```
 
 Now you can pass this theme in your CodeEditor prop just like you did for themes library themes

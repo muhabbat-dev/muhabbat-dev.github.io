@@ -10,10 +10,8 @@ tags:
   - astro
 keywords:
   - creating markdown files with astro ssr
-  - 'astro daily journal app '
+  - "astro daily journal app "
 ---
-
-## Overview
 
 In this article, We will create an astro project to save your daily journal as markdown files. We will create two pages, a home page where you will see all your journals and a create new journal page to enter new journals. We will use WYSIWYG editor to save the journal and save it as a markdown using Astro API module.
 
@@ -26,20 +24,20 @@ We will initialize by creating a new astro project by quickly running this comma
 Let's describe the schema of our journal in our src/content/config.ts file
 
 ```javascript
-import { defineCollection, z } from 'astro:content'
+import { defineCollection, z } from "astro:content";
 
 const journalCollection = defineCollection({
-	type: 'content',
-	schema: z.object({
-		title: z.string(),
-		pubDate: z.date(),
-		tags: z.array(z.string())
-	})
-})
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    pubDate: z.date(),
+    tags: z.array(z.string()),
+  }),
+});
 
 export const collections = {
-	journals: journalCollection
-}
+  journals: journalCollection,
+};
 ```
 
 ## Journals Home screen
@@ -66,25 +64,25 @@ Now open src/pages/index.astro file
 
 ```html
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content="{Astro.generator}" />
-		<title>Astro</title>
-	</head>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content="{Astro.generator}" />
+    <title>Astro</title>
+  </head>
 
-	<body class="">
-		<div class="flex justify-between my-5 px-5">
-			<h1 class="font-bold py-5 text-2xl">My Journals</h1>
-			<a
-				href="#"
-				class="flex justify-center items-center text-white px-10 py-0 bg-blue-500 rounded-lg hover:bg-blue-400"
-				>Create Journal</a
-			>
-		</div>
-		<div></div>
-	</body>
+  <body class="">
+    <div class="flex justify-between my-5 px-5">
+      <h1 class="font-bold py-5 text-2xl">My Journals</h1>
+      <a
+        href="#"
+        class="flex justify-center items-center text-white px-10 py-0 bg-blue-500 rounded-lg hover:bg-blue-400"
+        >Create Journal</a
+      >
+    </div>
+    <div></div>
+  </body>
 </html>
 ```
 
@@ -92,16 +90,16 @@ Let's quickly create a `src/layouts/main-layout.astro` file and put put all the 
 
 ```html
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content="{Astro.generator}" />
-		<title>Astro</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content="{Astro.generator}" />
+    <title>Astro</title>
+  </head>
+  <body>
+    <slot />
+  </body>
 </html>
 ```
 
@@ -110,15 +108,15 @@ Now, our index file looks cleaner
 ```html
 --- import MainLayout from "../loyouts/main-layout.astro" ---
 <MainLayout>
-	<div class="flex justify-between my-5 px-5">
-		<h1 class="font-bold py-5 text-2xl">My Journals</h1>
-		<a
-			href="#"
-			class="flex justify-center items-center text-white px-10 py-0 bg-blue-500 rounded-lg hover:bg-blue-400"
-			>Create Journal</a
-		>
-	</div>
-	<div></div>
+  <div class="flex justify-between my-5 px-5">
+    <h1 class="font-bold py-5 text-2xl">My Journals</h1>
+    <a
+      href="#"
+      class="flex justify-center items-center text-white px-10 py-0 bg-blue-500 rounded-lg hover:bg-blue-400"
+      >Create Journal</a
+    >
+  </div>
+  <div></div>
 </MainLayout>
 ```
 
@@ -134,7 +132,8 @@ const allJournals = (await getCollection('journals')).sort(
 ---
 
 .... { allJournals.map(journal =>
-<JournalCard title="{journal.data.title}" pubDate="{journal.data.pubDate}" />) } ....
+<JournalCard title="{journal.data.title}" pubDate="{journal.data.pubDate}" />) }
+....
 ```
 
 The final UI will look like this
@@ -179,11 +178,11 @@ const { Content } = await render();
 ---
 
 <div>
-	<h1 class="pt-5 px-4 font-bold">{data.title }</h1>
-	<div class="w-full h-0.5 bg-gray-300 my-5" />
-	<div class="border-2 border-gray-300 my-5 mx-10 p-5 prose prose-sm">
-		<content />
-	</div>
+  <h1 class="pt-5 px-4 font-bold">{data.title }</h1>
+  <div class="w-full h-0.5 bg-gray-300 my-5" />
+  <div class="border-2 border-gray-300 my-5 mx-10 p-5 prose prose-sm">
+    <content />
+  </div>
 </div>
 ```
 
@@ -198,60 +197,63 @@ and add pass require('@tailwindcss/typography'), in the plugins array in tailwin
 Let's dive into the second part of this article which is to create new journals. We will create a new page under src/pages/new\.astro. We'll display an input area where the user can enter the journal in markdown format. Also, We'll create a markdown preview section that will show the live preview of the markdown. I'm implementing all the markdown input and markdown preview logic in a React.js component since it's easy to manage the UI state in React. You can use vanilla javascript. You can add React.js support to your astro project by running `yarn astro add react`. After installing, Create a new React.js component under `src/components/Editor.jsx.` We will use the following code
 
 ```javascript
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 const MarkdownComponent = () => {
-	const [title, setTitle] = useState('untitled')
-	const [content, setContent] = useState(``)
-	const [html, setHtml] = useState('')
+  const [title, setTitle] = useState("untitled");
+  const [content, setContent] = useState(``);
+  const [html, setHtml] = useState("");
 
-	const handleSave = () => {}
-	return (
-		<div>
-			<div className='flex w-full justify-between px-10 py-5 '>
-				<div>
-					Name:{' '}
-					<input
-						className='focus:outline-none ring-2 ring-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 px-3 py-1'
-						value={title}
-						onChange={(e) => setTitle(e.target.value)}
-					/>
-				</div>
-			</div>
-			<section class='flex flex-col md:flex-row border border-gray-300 p-6 md:p-8 bg-gray-50 rounded-lg'>
-				<div className='w-full md:w-1/2 p-4 border border-gray-300 rounded-lg md:mr-2'>
-					<label for='textInput' className='block text-lg font-semibold text-gray-700 mb-2'>
-						Enter Markdown
-					</label>
-					<textarea
-						value={content}
-						onChange={(e) => setContent(e.target.value)}
-						rows='10'
-						class='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-						placeholder='Type your text here...'
-					></textarea>
-				</div>
-				<div className='w-full md:w-1/2 p-4 border border-gray-300 rounded-lg md:ml-2'>
-					<h2 className='text-lg font-semibold text-gray-700 mb-2'>Preview</h2>
-					<div
-						dangerouslySetInnerHTML={{ __html: html }}
-						class='prose prose-sm p-3 bg-white border border-gray-200 rounded-lg h-72 overflow-y-auto'
-					></div>
-				</div>
-			</section>
+  const handleSave = () => {};
+  return (
+    <div>
+      <div className="flex w-full justify-between px-10 py-5 ">
+        <div>
+          Name:{" "}
+          <input
+            className="focus:outline-none ring-2 ring-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 px-3 py-1"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+      </div>
+      <section class="flex flex-col md:flex-row border border-gray-300 p-6 md:p-8 bg-gray-50 rounded-lg">
+        <div className="w-full md:w-1/2 p-4 border border-gray-300 rounded-lg md:mr-2">
+          <label
+            for="textInput"
+            className="block text-lg font-semibold text-gray-700 mb-2"
+          >
+            Enter Markdown
+          </label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            rows="10"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Type your text here..."
+          ></textarea>
+        </div>
+        <div className="w-full md:w-1/2 p-4 border border-gray-300 rounded-lg md:ml-2">
+          <h2 className="text-lg font-semibold text-gray-700 mb-2">Preview</h2>
+          <div
+            dangerouslySetInnerHTML={{ __html: html }}
+            class="prose prose-sm p-3 bg-white border border-gray-200 rounded-lg h-72 overflow-y-auto"
+          ></div>
+        </div>
+      </section>
 
-			<div className='w-full flex justify-end px-14 py-5'>
-				<button
-					onClick={handleSave}
-					className='px-10 py-3 bg-blue-500 hover:bg-blue-400 rounded-md text-white'
-				>
-					Save
-				</button>
-			</div>
-		</div>
-	)
-}
+      <div className="w-full flex justify-end px-14 py-5">
+        <button
+          onClick={handleSave}
+          className="px-10 py-3 bg-blue-500 hover:bg-blue-400 rounded-md text-white"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  );
+};
 
-export default MarkdownComponent
+export default MarkdownComponent;
 ```
 
 The UI will look like this
@@ -263,19 +265,19 @@ Now, we can enter the journal content as a markdown in the left side and see the
 Now, After installing the libraries, Let's create a helper function that will accept markdown as a string an return the converted html. Create a new file src/utils/markdown.js. Add the following code
 
 ```javascript
-import rehypeStringify from 'rehype-stringify'
-import remarkParse from 'remark-parse'
-import remarkRehype from 'remark-rehype'
-import { unified } from 'unified'
+import rehypeStringify from "rehype-stringify";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import { unified } from "unified";
 
-export const markdownToHtml = async (content = '# Hello, *Mercury*!') => {
-	const html = await unified()
-		.use(remarkParse)
-		.use(remarkRehype)
-		.use(rehypeStringify)
-		.process(content)
-	return html
-}
+export const markdownToHtml = async (content = "# Hello, *Mercury*!") => {
+  const html = await unified()
+    .use(remarkParse)
+    .use(remarkRehype)
+    .use(rehypeStringify)
+    .process(content);
+  return html;
+};
 ```
 
 Let's now call this function inside our react component. can use useEffect hook, to call markdownToHtml. Add the following code in your React.js component
@@ -304,40 +306,45 @@ The UI will look like this
 We need to define an API endpoint that will accept the new journal request with the title and content from the frontend. First, we need to add output : 'hybrid',our astro.config.mjssince we're now using SSR mode for our api endpoint. Create a new file at src/pages/api/postJournal.js and add the following code.
 
 ```javascript
-import fs from 'fs'
-import path from 'path'
-export const prerender = false
+import fs from "fs";
+import path from "path";
+export const prerender = false;
 export const POST = async ({ request }) => {
-	const headers = request.headers.get('Content-Type')
-	console.log({ headers })
-	if (request.headers.get('Content-Type') === 'application/json') {
-		const { content, title } = await request.json()
-		const markdownContent = `---
+  const headers = request.headers.get("Content-Type");
+  console.log({ headers });
+  if (request.headers.get("Content-Type") === "application/json") {
+    const { content, title } = await request.json();
+    const markdownContent = `---
 title: "${title}"
 date: ${new Date().toISOString()}
 ---
 ${content}
-`
-		const filePath = path.join(
-			process.cwd(),
-			'src',
-			'content',
-			'journals',
-			`${title.split(' ').join('-')}.md`
-		)
-		try {
-			fs.writeFileSync(filePath, markdownContent, 'utf8')
-			return new Response(JSON.stringify({ status: 'success' }), { status: 200 })
-		} catch (error) {
-			console.error(error)
-			return new Response(JSON.stringify({ status: 'error', message: error.message }), {
-				status: 500
-			})
-		}
-	} else {
-		return new Response('Invalid request')
-	}
-}
+`;
+    const filePath = path.join(
+      process.cwd(),
+      "src",
+      "content",
+      "journals",
+      `${title.split(" ").join("-")}.md`,
+    );
+    try {
+      fs.writeFileSync(filePath, markdownContent, "utf8");
+      return new Response(JSON.stringify({ status: "success" }), {
+        status: 200,
+      });
+    } catch (error) {
+      console.error(error);
+      return new Response(
+        JSON.stringify({ status: "error", message: error.message }),
+        {
+          status: 500,
+        },
+      );
+    }
+  } else {
+    return new Response("Invalid request");
+  }
+};
 ```
 
 Finally call the request from the React component by adding the following code in handleSave function. Got to src/components/Editor.js and this code

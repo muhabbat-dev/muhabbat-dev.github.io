@@ -11,8 +11,6 @@ keywords:
   - whatsapp api implementation using node.js
 ---
 
-## Overview
-
 WhatsApp API is a great way to send to your customers directly from your website to improve business. In this guide, I will walk you through each step to implement WhatsApp API in your website.
 
 ## What we are going to do
@@ -150,65 +148,65 @@ We will use node.js to send the HTTP request. However, You can call this HTTP re
 
 ```javascript
 const user = {
-	name: 'Muhabbat',
-	email: 'user_email@gmail.com',
-	address: 'Avenue 1, ABC'
-}
+  name: "Muhabbat",
+  email: "user_email@gmail.com",
+  address: "Avenue 1, ABC",
+};
 
-const WHATSAPP_TOKEN = 'your_whatsapp_token'
-const WHATSAPP_SENDER_ID = 'sender_number'
-const WHATSAPP_RECIPIENT_NUMBER = 'recepient_id'
-const WHATSAPP_TEMPLATE_NAME = 'user_info'
-const WHATSAPP_API_VERSION = 'v18.0'
+const WHATSAPP_TOKEN = "your_whatsapp_token";
+const WHATSAPP_SENDER_ID = "sender_number";
+const WHATSAPP_RECIPIENT_NUMBER = "recepient_id";
+const WHATSAPP_TEMPLATE_NAME = "user_info";
+const WHATSAPP_API_VERSION = "v18.0";
 
 const requestBody = {
-	messaging_product: 'whatsapp',
-	to: WHATSAPP_RECIPIENT_NUMBER,
-	type: 'template',
-	template: {
-		name: 'new_order',
-		language: {
-			code: 'en_US'
-		},
-		components: [
-			{
-				type: 'body',
-				parameters: [
-					{
-						type: 'text',
-						text: user.name
-					},
-					{
-						type: 'text',
-						text: user.email
-					},
-					{
-						type: 'text',
-						text: user.address
-					}
-				]
-			}
-		]
-	}
-}
+  messaging_product: "whatsapp",
+  to: WHATSAPP_RECIPIENT_NUMBER,
+  type: "template",
+  template: {
+    name: "new_order",
+    language: {
+      code: "en_US",
+    },
+    components: [
+      {
+        type: "body",
+        parameters: [
+          {
+            type: "text",
+            text: user.name,
+          },
+          {
+            type: "text",
+            text: user.email,
+          },
+          {
+            type: "text",
+            text: user.address,
+          },
+        ],
+      },
+    ],
+  },
+};
 
-const requestUrl = `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${WHATSAPP_SENDER_ID}/messages`
+const requestUrl = `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${WHATSAPP_SENDER_ID}/messages`;
 
-const requestHeaders = new Headers()
-requestHeaders.append('Content-Type', 'application/json')
-requestHeaders.append('Authorization', `Bearer ${WHATSAPP_TOKEN}`)
+const requestHeaders = new Headers();
+requestHeaders.append("Content-Type", "application/json");
+requestHeaders.append("Authorization", `Bearer ${WHATSAPP_TOKEN}`);
 
 fetch(requestUrl, {
-	method: 'POST',
-	headers: requestHeaders,
-	body: JSON.stringify(requestBody),
-	redirect: 'follow'
+  method: "POST",
+  headers: requestHeaders,
+  body: JSON.stringify(requestBody),
+  redirect: "follow",
 })
-	.then((response) => response.json())
-	.then((result) => {
-		if (result.messages[0].message_status == 'accepted') {
-			console.log('message sent')
-		}
-	})
-	.catch((error) => console.error(error))
+  .then((response) => response.json())
+  .then((result) => {
+    if (result.messages[0].message_status == "accepted") {
+      console.log("message sent");
+    }
+  })
+  .catch((error) => console.error(error));
 ```

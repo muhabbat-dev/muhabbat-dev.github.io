@@ -27,13 +27,6 @@ import { AstroFont } from "astro-font";
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content={articleDate ? "article" : "website"} />
-<meta property="og:url" content={Astro.url} />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-<meta property="og:image" content={socialImageURL} />
-
 {
   articleDate && (
     <>

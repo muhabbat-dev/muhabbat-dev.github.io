@@ -5,19 +5,17 @@ slug: mastering-flutter-bloc-a-practical-guide
 heroImage: /src/assets/images/blog/2025/mastering-flutter-bloc-a-practical-guide.png
 category: Mobile Development
 description: Master the Flutter BLoC pattern with our practical guide. Learn essential tips, see code examples, and avoid common pitfalls for clean, scalable state management in your apps.
-pubDate:  2025-09-19T18:29:48.467Z
+pubDate: 2025-09-19T18:29:48.467Z
 keywords:
-- Flutter BLoC
-- Flutter state management
-- BLoC pattern
-- Flutter architecture
-- clean code
+  - Flutter BLoC
+  - Flutter state management
+  - BLoC pattern
+  - Flutter architecture
+  - clean code
 tags:
-- flutter
-- bloc
+  - flutter
+  - bloc
 ---
-
-# Mastering Flutter BLoC A Practical Guide
 
 State management is a critical part of any Flutter application. As your app grows, managing how data flows can get complicated. This is where a solid architectural pattern comes in, and for many Flutter developers, BLoC is the answer.
 
@@ -130,7 +128,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       // Simulate a network call
       await Future.delayed(const Duration(seconds: 2));
-      
+
       if (event.email == 'test@test.com' && event.password == 'password') {
         const token = 'fake-jwt-token';
         emit(const AuthSuccess(userToken: token));
@@ -239,6 +237,7 @@ class LoginPage extends StatelessWidget {
 ```
 
 This example shows the full loop:
+
 1.  The UI dispatches an `AuthLoginRequested` event when the button is pressed.
 2.  The `AuthBloc` receives the event, emits an `AuthLoading` state.
 3.  The `BlocConsumer` rebuilds the UI to show a loading indicator.
