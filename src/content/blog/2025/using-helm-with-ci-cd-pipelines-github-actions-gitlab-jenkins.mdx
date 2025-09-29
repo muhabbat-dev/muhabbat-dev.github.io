@@ -1,0 +1,152 @@
+---
+draft: false
+title: Using Helm with CI/CD Pipelines (GitHub Actions, GitLab, Jenkins)
+slug: using-helm-with-ci-cd-pipelines-github-actions-gitlab-jenkins
+heroImage: /src/assets/images/blog/2025/using-helm-with-ci-cd-pipelines-github-actions-gitlab-jenkins.png
+category: DevOps
+description: Discover how to integrate Helm with your CI/CD pipelines. This guide provides step-by-step examples for automating Kubernetes deployments using GitHub Actions, GitLab CI, and Jenkins.
+pubDate:  2025-09-29T05:59:15.900Z
+keywords:
+- helm
+- ci/cd
+- kubernetes
+- devops
+- github actions
+- gitlab
+- jenkins
+- automation
+tags:
+- helm
+- kubernetes
+- devops
+- github actions
+- gitlab ci
+- jenkins
+---
+
+If you work with Kubernetes, you know that managing all those YAML files can get complicated. You have files for deployments, services, configmaps, and more. When you want to update your application, you find yourself copying, pasting, and manually changing values. It’s slow and easy to make mistakes.
+
+This is where Helm comes in. Helm is a package manager for Kubernetes that helps you define, install, and upgrade even the most complex applications. When combined with a CI/CD pipeline, it creates a powerful, automated workflow for your deployments.
+
+In this guide, we'll walk through exactly how to use Helm with three of the most popular CI/CD platforms: **GitHub Actions**, **GitLab**, and **Jenkins**.
+
+## What is Helm and Why Should You Use It?
+
+Think of Helm like `npm` for Node.js or `pip` for Python. It packages up all the Kubernetes resources your application needs into a single, reusable unit called a **Chart**.
+
+A Helm chart is a collection of files that describe your application. Its key feature is templating. You can use variables in your YAML files, which makes your configurations reusable for different environments like development, staging, and production.
+
+Here’s why it’s so useful:
+- **Manage Complexity:** A single `helm install` command can set up an entire application stack, like WordPress with its database.
+- **Easy Updates:** Upgrading your application is as simple as running `helm upgrade`. Helm handles the details of what changed.
+- **Shareable:** You can package your charts and share them with your team or the community.
+
+## The Basic CI/CD Workflow with Helm
+
+Connecting Helm to your CI/CD pipeline creates a smooth, automated process. The goal is to go from a code change to a live deployment with no manual steps.
+
+Here’s what the typical workflow looks like:
+
+1.  **Code Push:** A developer pushes a code change to a Git repository.
+2.  **CI/CD Trigger:** The push automatically triggers a pipeline.
+3.  **Build and Push Image:** The pipeline builds a new Docker image, tags it (usually with the commit hash), and pushes it to a container registry like Docker Hub or GCR.
+4.  **Deploy with Helm:** The pipeline then uses Helm to deploy the application. It runs a command like `helm upgrade`, telling the chart to use the new Docker image tag.
+
+This flow makes your deployments consistent and reliable.
+
+## Integrating Helm into Your CI/CD Pipeline
+
+Let's look at how to set up the deployment step in GitHub Actions, GitLab, and Jenkins. The core command is usually `helm upgrade --install`. This command will install the chart if it's not already there, or upgrade it if it is.
+
+### Using Helm with GitHub Actions
+
+GitHub Actions makes it easy to automate workflows directly from your repository. You’ll need to store your Kubernetes configuration (kubeconfig) as a secret in your repository settings.
+
+Here’s a simple workflow step that deploys a Helm chart:
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Add steps here to build and push your Docker image
+
+    - name: Deploy to Kubernetes
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      with:
+        args: |
+          helm upgrade --install my-app ./charts/my-app \
+            --set image.tag=${{ github.sha }} \
+            --namespace my-namespace
+```
+In this example, we use the commit SHA (`github.sha`) as the image tag. The `helm upgrade` command passes this tag to our chart, updating the deployment.
+
+### Using Helm with GitLab CI
+
+GitLab CI is tightly integrated with GitLab repositories. You can connect a Kubernetes cluster directly to your project, which simplifies authentication.
+
+Here is what a deploy stage might look like in your `.gitlab-ci.yml` file:
+
+```yaml
+# .gitlab-ci.yml
+deploy:
+  stage: deploy
+  image:
+    name: dtzar/helm-kubectl # A container image with Helm and kubectl
+    entrypoint: [""]
+  script:
+    - helm upgrade --install my-app ./charts/my-app \
+      --set image.tag=${CI_COMMIT_SHORT_SHA} \
+      --namespace my-namespace
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+```
+This job uses a Docker image that has Helm installed. It uses GitLab’s predefined variable `CI_COMMIT_SHORT_SHA` to tag the image and tells Helm to deploy the new version.
+
+### Using Helm with Jenkins
+
+Jenkins is a classic, flexible CI/CD server. You would typically define your pipeline in a `Jenkinsfile`. You’ll need the Kubernetes CLI plugin and Credentials plugin to securely manage your cluster credentials.
+
+A deployment stage in a `Jenkinsfile` could look like this:
+
+```groovy
+// Jenkinsfile
+pipeline {
+    agent any
+    stages {
+        // Add build and push stages before this
+        stage('Deploy') {
+            steps {
+                script {
+                    withKubeconfig([credentialsId: 'my-kube-credentials']) {
+                        sh '''
+                            helm upgrade --install my-app ./charts/my-app \
+                              --set image.tag=${env.GIT_COMMIT.substring(0, 7)} \
+                              --namespace my-namespace
+                        '''
+                    }
+                }
+            }
+        }
+    }
+}
+```
+This script block uses the `withKubeconfig` wrapper to provide secure access to your cluster. It then runs the `helm upgrade` command, using the Git commit ID as the image tag.
+
+## Final Thoughts
+
+Combining Helm with a CI/CD pipeline is like setting up an automated assembly line for your software. Whether you use GitHub Actions, GitLab, or Jenkins, the core principle is the same: automate the deployment process to make it faster and more reliable.
+
+You write the blueprint (the Helm chart), and the assembly line (your CI/CD pipeline) delivers it perfectly every time a change is made. If you’re not already using this workflow, try implementing it for one of your services. You’ll be surprised at how much it simplifies your deployments and boosts your confidence in shipping code.
