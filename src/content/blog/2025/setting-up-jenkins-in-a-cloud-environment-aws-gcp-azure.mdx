@@ -1,0 +1,138 @@
+---
+draft: false
+title: Setting Up Jenkins in a Cloud Environment (AWS, GCP, Azure)
+slug: setting-up-jenkins-in-a-cloud-environment-aws-gcp-azure
+heroImage: /src/assets/images/blog/2025/setting-up-jenkins-in-a-cloud-environment-aws-gcp-azure.png
+category: DevOps
+description: Learn how to set up Jenkins on major cloud platforms like AWS, GCP, and Azure. This step-by-step guide helps developers deploy a CI/CD server in any cloud environment.
+pubDate:  2025-09-29T06:09:33.173Z
+keywords:
+- jenkins setup
+- ci/cd pipeline
+- jenkins on aws
+- jenkins on gcp
+- jenkins on azure
+- cloud automation
+tags:
+- jenkins
+- aws
+- gcp
+- azure
+- devops
+- ci/cd
+
+---
+
+If you've ever run a build server on a machine under your desk, you know the struggle. It's noisy, it goes offline with a simple power trip, and it’s a pain for your team to access. Moving your automation server to the cloud is the natural next step for any serious development team.
+
+Jenkins is a powerful and flexible open-source automation server that’s perfect for CI/CD pipelines. This guide will walk you through setting up Jenkins in a cloud environment, covering the three major players: Amazon Web Services (AWS), Google Cloud Platform (GCP), and Microsoft Azure. You'll find the process is remarkably consistent across all three.
+
+Think of it like setting up a central kitchen for all your software projects. Instead of a tiny, unreliable kitchenette in your apartment (your local machine), you're building a professional-grade kitchen in a massive, secure, and always-on facility (the cloud).
+
+## Why Run Jenkins in the Cloud?
+
+Before we dive into the setup, let’s quickly recap why this is such a good move.
+
+- **Scalability**: Need more processing power for a complex build? You can resize your virtual machine in minutes. Need more build agents to run jobs in parallel? Spin them up on demand.
+- **Reliability**: Cloud providers offer high uptime guarantees (SLAs). You no longer have to worry about local hardware failures or power outages bringing your CI/CD pipeline down.
+- **Accessibility**: Your entire team can securely access the Jenkins server from anywhere in the world, making remote collaboration seamless.
+- **Integration**: Running in the cloud makes it easier to integrate Jenkins with other cloud services, like using AWS S3 for build artifacts or Google Container Registry for Docker images.
+
+## The Universal Game Plan for Any Cloud
+
+No matter which cloud provider you choose, the fundamental steps are the same. We need to provision a virtual machine, install the necessary software, and open a port to access the Jenkins web interface.
+
+1.  **Provision a Virtual Machine (VM)**: This is our cloud-based server. It’s called an **EC2 Instance** on AWS, a **VM Instance** on GCP, and a **Virtual Machine** on Azure.
+2.  **Install Dependencies**: Jenkins is a Java application, so we need to install the Java Development Kit (JDK) first.
+3.  **Install Jenkins**: We'll add the official Jenkins repository and install the application package.
+4.  **Configure the Firewall**: By default, cloud VMs block most incoming traffic. We need to create a rule to allow access on port `8080` for the Jenkins UI.
+5.  **Complete the Setup**: We’ll get the initial admin password from the server and finish the configuration through our web browser.
+
+## Setting Up Jenkins on AWS
+
+AWS is a popular choice, and its Elastic Compute Cloud (EC2) service is ideal for hosting Jenkins.
+
+### Step 1: Launch an EC2 Instance
+- Log in to your AWS Console and navigate to the EC2 dashboard.
+- Click **Launch instances**.
+- Choose an Amazon Machine Image (AMI). **Ubuntu Server** is a reliable and common choice.
+- Select an instance type. A `t3.medium` is a good starting point for a small team.
+- In the **Network settings**, create or edit a security group. This acts as a virtual firewall for your instance. Add a rule to allow **inbound** TCP traffic on port `8080` from `Anywhere (0.0.0.0/0)`.
+- Launch the instance and connect to it using SSH.
+
+### Step 2: Install Jenkins
+Once you're connected to your EC2 instance, run the following commands. This script will update your server, install Java, and then install Jenkins.
+
+```bash
+# Update the package list
+sudo apt update
+
+# Install the Java Development Kit (JDK 17)
+sudo apt install fontconfig openjdk-17-jre -y
+
+# Add the Jenkins repository key
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+  
+# Add the Jenkins repository to your system
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+# Update package list again and install Jenkins
+sudo apt-get update
+sudo apt-get install jenkins -y
+```
+After installation, start and enable the Jenkins service:
+```bash
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+```
+
+## Setting Up Jenkins on Google Cloud Platform (GCP)
+
+The process on GCP is very similar, just with different terminology for the services.
+
+### Step 1: Create a VM Instance
+- In the GCP Console, go to **Compute Engine** > **VM instances** and click **Create Instance**.
+- Give your instance a name and select a region.
+- Choose a machine type, like `e2-medium`.
+- For the boot disk, select **Ubuntu**.
+- In the **Firewall** section, go to **Networking** > **VPC network** > **Firewall**. Create a new firewall rule to allow ingress TCP traffic on port `8080`. Apply this rule to your instance using a target tag.
+
+### Step 2: Install Jenkins
+Connect to your VM instance via SSH from the GCP console. The installation commands are the exact same as the ones we used for AWS. Just run the scripts from the previous section to install, start, and enable Jenkins.
+
+## Setting Up Jenkins on Azure
+
+Azure is Microsoft's cloud platform, but it has excellent support for Linux and open-source tools like Jenkins.
+
+### Step 1: Create an Azure Virtual Machine
+- In the Azure Portal, go to **Virtual machines** and click **Create**.
+- Choose a resource group and give your VM a name.
+- For the **Image**, select **Ubuntu Server**.
+- Choose a **Size**, such as `Standard_B2s`.
+- On the **Networking** tab, locate the Network Security Group (NSG). An NSG is Azure's firewall. Add an inbound port rule to allow TCP traffic on port `8080` from any source.
+- Create the VM and connect to it with SSH.
+
+### Step 2: Install Jenkins
+Once you are connected to the VM, run the same installation and service commands from the AWS section. The underlying software installation process is identical.
+
+## The Final Step: First-Time Jenkins Setup
+
+Now that Jenkins is installed and running, open your web browser and navigate to `http://<your-vm-ip-address>:8080`.
+
+You will be prompted for an initial administrator password. To retrieve it, run this command in your VM's terminal:
+```bash
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+Copy the long string of characters and paste it into the Jenkins setup page. From there:
+1.  Click **Install suggested plugins**. This will install a standard set of plugins for common tasks.
+2.  Create your first admin user account.
+3.  Confirm the Jenkins URL, and you're done!
+
+This final setup is like configuring a new phone. You enter a temporary password, install the essential apps (plugins), and create your user account before you can start using it.
+
+## Conclusion
+
+Setting up Jenkins in a cloud environment isn't as daunting as it might seem. The core process is the same across AWS, GCP, and Azure. The only real difference lies in how each platform handles virtual machine creation and firewall configuration. By moving Jenkins to the cloud, you gain a scalable, reliable, and accessible automation server that can grow with your team and projects. Now you're ready to start building powerful CI/CD pipelines.
