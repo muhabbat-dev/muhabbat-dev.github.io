@@ -1,0 +1,124 @@
+---
+draft: false
+title: Ansible and GitOps A Practical Guide
+slug: ansible-and-gitops-a-practical-guide
+heroImage: /src/assets/images/blog/2025/ansible-and-gitops-a-practical-guide.png
+category: DevOps
+description: Learn how to combine Ansible's powerful automation with modern GitOps workflows. This practical guide shows you how to manage your entire infrastructure, from Kubernetes to legacy servers, using Git as the single source of truth.
+pubDate:  2025-09-30T10:13:22.310Z
+keywords:
+- ansible
+- gitops
+- devops
+- automation
+- infrastructure as code
+- configuration management
+- ci/cd
+tags:
+- ansible
+- gitops
+- kubernetes
+- ci/cd
+---
+
+If you're in the DevOps space, you’ve probably used Ansible. You also can't miss the buzz around GitOps. This often leads to a big question: do you have to choose one over the other? The answer is a clear no. In fact, they work together remarkably well.
+
+Ansible is great at telling systems *how* to perform a series of tasks. GitOps is a methodology focused on declaring *what* the end state should look like, using Git as the single source of truth. Combining them lets you manage everything, from your Kubernetes clusters to your legacy virtual machines, all from a single, version-controlled repository.
+
+This post will show you how to blend Ansible’s powerful automation with a modern GitOps workflow.
+
+## Why Combine Ansible and GitOps?
+
+Think of it like building a house. GitOps is the architect’s blueprint. It declaratively shows what the finished house should look like—three bedrooms, two bathrooms, a big kitchen. It is the desired state.
+
+Ansible is the experienced construction crew. They have all the tools and skills to actually build the house based on that blueprint. They pour the foundation, frame the walls, and install the plumbing, handling the specific, step-by-step tasks.
+
+While GitOps tools like Argo CD and Flux are excellent for managing Kubernetes resources (the blueprint part), they often can't handle tasks outside the cluster. What about provisioning a database on a VM or configuring a network switch? That’s where your Ansible "construction crew" comes in.
+
+By using them together, you get:
+- **A Single Source of Truth:** Your Git repo can now describe the state of your *entire* infrastructure, not just Kubernetes.
+- **Reuse Your Existing Work:** There's no need to throw away all your battle-tested Ansible playbooks and roles.
+- **Full Infrastructure Management:** You can manage applications on Kubernetes and traditional systems with the same consistent, auditable workflow.
+
+## How to Make It Work
+
+The key is to trigger your Ansible jobs based on changes in your Git repository. There are two common and effective ways to set this up.
+
+### 1. The Operator Model (The Kubernetes-Native Way)
+
+This is the most integrated approach if you're working heavily within Kubernetes. It involves using a Kubernetes Operator designed to run Ansible jobs. The Ansible Automation Platform (AAP) Operator is a popular choice, but other open-source options are also available.
+
+Here’s the flow:
+1. You commit a change to a YAML file in your Git repository. This file is a `CustomResource` that describes the Ansible job you want to run.
+2. Your GitOps tool (like Argo CD) sees this change and applies the `CustomResource` to your cluster.
+3. The Ansible Operator, which is always watching for these specific resources, sees the new object.
+4. The Operator spins up a Pod and runs the Ansible playbook you specified.
+
+Here is what that `CustomResource` might look like. It’s a simple, declarative request to run a playbook.
+
+```yaml
+# ansible-run.yaml
+apiVersion: automation.ansible.com/v1alpha1
+kind: AnsibleJob
+metadata:
+  name: provision-new-vm
+spec:
+  # The playbook to run from your git repo
+  playbook: "playbooks/provision-vm.yml"
+  # Extra variables to pass to the playbook
+  extra_vars:
+    vm_name: "web-server-01"
+    vm_size: "t2.micro"
+```
+
+When you commit this file, the GitOps process kicks off, and your VM gets provisioned automatically.
+
+### 2. The CI/CD Pipeline Model (The Simple and Flexible Way)
+
+If you don't want to run an operator inside Kubernetes, or if you're managing non-Kubernetes resources, a standard CI/CD pipeline is a fantastic choice. It's more straightforward and works with tools you already use, like GitHub Actions or GitLab CI.
+
+The flow is very direct:
+1. You push a change to your Git repository.
+2. The push triggers a CI/CD pipeline (e.g., a GitHub Actions workflow).
+3. The pipeline job checks out the repository.
+4. The job runs the `ansible-playbook` command to apply the changes to your infrastructure.
+
+Here’s a simple GitHub Actions workflow that runs a playbook on every push to the `main` branch.
+
+```yaml
+# .github/workflows/ansible.yml
+name: Run Ansible Playbook
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Run Ansible playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: site.yml
+        # Stored securely in GitHub Secrets
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        inventory: |
+          [webservers]
+          app1.example.com
+```
+This approach is less "Kubernetes-native" but is incredibly effective and easy to set up.
+
+## Best Practices to Remember
+
+- **Keep Playbooks Idempotent:** An idempotent playbook can be run over and over, but it will only make changes the first time to reach the desired state. This is absolutely critical for reliable automation.
+- **Manage Secrets Properly:** Never, ever commit secrets like API keys or passwords to Git. Use a dedicated tool like HashiCorp Vault, AWS Secrets Manager, or Ansible Vault to manage them securely.
+- **Use Roles for Reusability:** Break your playbooks into reusable Ansible Roles. This keeps your code clean, organized, and much easier to maintain as your infrastructure grows.
+
+## Conclusion
+
+Ansible and GitOps aren't competitors; they're partners. GitOps defines the "what"—the desired state of your system stored in Git. Ansible provides a powerful "how"—an engine that can make that state a reality across any part of your infrastructure.
+
+By combining them, you get a robust, version-controlled, and automated system for managing everything. You can finally have one workflow to rule them all.
